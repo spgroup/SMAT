@@ -33,7 +33,7 @@ class semantic_study:
         self.randoop_modified_setup = Randoop_Modified_setup()
         self.report_analysis = Report_Analysis()
 
-        self.output_semantic_conflict = Output_semantic_conflicts(os.getcwd().replace("/nimrod/proj", "/"), "test_conflicts")
+        self.output_semantic_conflict = Output_semantic_conflicts(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "test_conflicts")
         self.output_behavior_change = Output_behavior_change_commit_pair(os.getcwd().replace("/nimrod/proj", "/"), "behavior_change")
 
         self.output_report = Output_report(config["path_output_csv"])

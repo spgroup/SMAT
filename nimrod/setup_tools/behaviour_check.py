@@ -37,7 +37,7 @@ class Behaviour_check:
         valid_base_left_right_pass = parent_base.ok_tests.intersection(parent_left.ok_tests, parent_right.ok_tests).difference(not_executed_tests, parent_base.fail_test_set, parent_left.fail_test_set, parent_right.fail_test_set)
         valid_base_left_right_fail = parent_base.fail_test_set.intersection(parent_left.fail_test_set, parent_right.fail_test_set).difference(not_executed_tests, parent_base.ok_tests, parent_left.ok_tests, parent_right.ok_tests)
 
-        selected_cases = self.get_test_cases_with_files(valid_base_left_right_pass.difference(parent_merge.ok_tests), parent_base.fail_test_set_with_files)
+        selected_cases = self.get_test_cases_with_files(valid_base_left_right_pass.difference(parent_merge.ok_tests), parent_merge.fail_test_set_with_files)
         selected_cases2 = self.get_test_cases_with_files(valid_base_left_right_fail.difference(parent_merge.fail_test_set), parent_base.fail_test_set_with_files)
 
         final_selected_cases = selected_cases.union(selected_cases2)

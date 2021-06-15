@@ -18,7 +18,7 @@ class TestSafira(TestCase):
         self.maven = Maven(self.java, get_config()['maven_home'])
         self.maven.compile(calculator_project_dir(), 10)
 
-    def test_run_safira(self):
+    '''def test_run_safira(self):
         safira = Safira(self.java, calculator_target_dir(),
                         calculator_src_aor_1())
 
@@ -35,7 +35,7 @@ class TestSafira(TestCase):
         self.assertTrue('br.ufal.ic.easy.Calculator()' in
                         results.constructors)
         self.assertTrue('br.ufal.ic.easy.operations.Sum()' in
-                        results.constructors)
+                        results.constructors)'''
 
     def test_run_safira_timeout(self):
         safira = Safira(self.java, calculator_target_dir(),

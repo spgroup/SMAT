@@ -41,7 +41,7 @@ class Java:
 
     @property
     def java(self):
-        return os.path.join(self.java_home, os.sep.join(['jre', 'bin', 'java']))
+        return os.path.join(self.java_home, os.sep.join(['bin', 'java']))
 
     def _version_javac(self):
         return self.simple_exec_javac('-version')

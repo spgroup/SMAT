@@ -48,7 +48,7 @@ class TestJava(TestCase):
         java = Java(self.java_home)
 
         self.assertEqual(
-            os.path.join(self.java_home, os.sep.join(['jre', 'bin', 'java'])),
+            os.path.join(self.java_home, os.sep.join(['bin', 'java'])),
             java.java)
 
     def test_maven_wrong_args(self):

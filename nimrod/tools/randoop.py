@@ -34,7 +34,7 @@ class Randoop(SuiteGenerator):
     def _test_classes(self):
         return ['RegressionTest']
 
-    def generate_with_impact_analysis(self, impact_analysis, method_analysis):
+    def generate_with_impact_analysis(self, impact_analysis, method_analysis=False):
         method_list = ""
         self._make_src_dir()
         impact_analysis_result = impact_analysis.run()

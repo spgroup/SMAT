@@ -12,7 +12,7 @@ from nimrod.mutant import Mutant
 TIMEOUT = 3000
 
 
-JUnitResult = namedtuple('JUnitResult', ['ok_tests', 'fail_tests', 
+JUnitResult = namedtuple('JUnitResult', ['ok_tests', 'ok_tests_number', 'fail_tests',
                                          'fail_test_set', 'fail_test_set_with_files', 'not_executed_test_set',
                                          'not_executed_test_set_with_files', 'flaky_test_set', 'run_time',
                                          'coverage', 'timeout'])
@@ -86,7 +86,7 @@ class JUnit:
             elapsed_time = time.time() - start
             print("# [WARNING] Run JUnit tests timed out. {0} seconds".format(
                 elapsed_time))
-            return JUnitResult(0, 0, set(), 0, None, True)
+            return JUnitResult(set, 0, 0, set(), set(), set(), set(), set(), 0, None, True)
 
     @staticmethod
     def _extract_results_ok(output):
@@ -94,9 +94,9 @@ class JUnit:
         if len(result) > 0:
             result = result[0].replace('(', '')
             r = [int(s) for s in result.split() if s.isdigit()]
-            return set(), 0, set(), set(), set(), set(), set()
+            return set(), r[0], 0, set(), set(), set(), set(), set()
 
-        return 0, 0, set()
+        return set, 0, 0, set(), set(), set(), set(), set()
 
     @staticmethod
     #trabalhar para extrair o conjunto de testes que passaram.
@@ -108,9 +108,9 @@ class JUnit:
                 result = result[0].replace(',', ' ')
                 r = [int(s) for s in result.split() if s.isdigit()]
                 result = JUnit._extract_test_id(output)
-                return result[2], r[1], result[0], result[3], result[1], result[4], set()
+                return result[2], len(result[2]), r[1], result[0], result[3], result[1], result[4], set()
 
-        return 0, 0, set()
+        return set(), 0, 0, set(), set(), set(), set(), set()
 
     @staticmethod
     def _extract_test_id(output):
@@ -150,6 +150,7 @@ class JUnit:
                         original_dir=None):
         executions_test = []
         ok_tests = set()
+        ok_tests_number = 0
         fail_tests = 0
         fail_test_set = set()
         fail_test_set_with_files = set()
@@ -163,12 +164,13 @@ class JUnit:
         timeout = False
         flaky_test_set = set()
 
-        for i in range(0, 1):
+        for i in range(0, 3):
             for test_class in suite.test_classes:
                 result = self.exec_with_mutant(suite.suite_dir,
                                                suite.suite_classes_dir, sut_class,
                                                test_class, mutant_dir)
                 ok_tests = result.ok_tests
+                ok_tests_number = result.ok_tests_number
                 fail_tests += result.fail_tests
                 not_executed_test_set = result.not_executed_test_set
                 not_executed_test_set_with_files = result.not_executed_test_set_with_files
@@ -204,7 +206,7 @@ class JUnit:
                     if r.timeout:
                         return None
 
-            executions_test.append(JUnitResult(ok_tests, fail_tests, fail_test_set, fail_test_set_with_files, not_executed_test_set,not_executed_test_set_with_files, flaky_test_set, run_time,Coverage(call_points, test_cases, executions,class_coverage),timeout))
+            executions_test.append(JUnitResult(ok_tests, ok_tests_number, fail_tests, fail_test_set, fail_test_set_with_files, not_executed_test_set,not_executed_test_set_with_files, flaky_test_set, run_time,Coverage(call_points, test_cases, executions,class_coverage),timeout))
 
         return self.check_for_consistent_test_results(executions_test)
 

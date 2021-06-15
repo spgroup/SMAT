@@ -19,8 +19,8 @@ class Maven:
         self.java = java
         self.skip_compile = skip_compile
 
-        #self._set_home()
-        #self._check()
+        self._set_home()
+        self._check()
 
     def _check(self):
         try:
