@@ -129,9 +129,12 @@ class Coverage_Report(Setup_tool):
         parameters_list = parameters.split(",")
         adjusted_parameters = []
         for item in range (len(parameters_list)):
-            last_point_index = parameters_list[item].rindex(".")
-            parameter_type = parameters_list[item][last_point_index + 1:len(parameters_list[item])]
-            adjusted_parameters.append(parameter_type)
+            if "." in parameters_list[item]:
+                posicaoUltimoPonto = parameters_list[item].rindex(".")
+                parameters_list[item] = parameters_list[item][posicaoUltimoPonto + 1:len(parameters_list[item])]
+            else:
+                parameters_list[item] = parameters_list[item][1:]
+            adjusted_parameters.append(parameters_list[item])
 
         parameters = ""
         for item in range(len(adjusted_parameters)):
@@ -221,6 +224,7 @@ class Coverage_Report(Setup_tool):
         porcentagemInstrucMetodoTarget = ''
         linhasCobertasMetodoTarget = ''
         tagSpanMetodoTarget = ''
+        porcentagemCoberturaLinhasMetodoTarget = ''
 
         vaiGerarReportMetodo = True
 
