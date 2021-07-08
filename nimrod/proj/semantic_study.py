@@ -61,9 +61,9 @@ if __name__ == '__main__':
                 coverage_report = Coverage_Report()
                 merge = MergeScenario(merge_information=row)
                 for i in range(0, 1):
-                    evosuite = semantic_study_obj.evosuite_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.EVOSUITE.value)
+                    '''evosuite = semantic_study_obj.evosuite_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.EVOSUITE.value)
                     semantic_study_obj.output_semantic_conflict.write_output_line(row[0], evosuite, row[6], row[7])
-                    evosuite_diff = semantic_study_obj.evosuite_diff_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.DIFF_EVOSUITE.value)
+                    evosuite_diff = semantic_study_obj.evosuite_diff_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.DIFF_EVOSUITE.value)'''
                     semantic_study_obj.output_semantic_conflict.write_output_line(row[0], evosuite_diff, row[6], row[7])
                     randoop = semantic_study_obj.randoop_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.RANDOOP.value)
                     semantic_study_obj.output_semantic_conflict.write_output_line(row[0], randoop, row[6], row[7])
