@@ -20,6 +20,8 @@ class Target_Method_Metric(Metric):
             lines = methods_report.split("\n")
             for line in lines[1:-1]:  # Exclude the first one because contains the headers and the last one because it is a empty line
                 cells = re.split("(?<=\"),", line)
+                aux = re.split(",", cells[1])
+                cells[1] = aux[0]
                 if randoop_original_report:
                     method_map = {cells[0]: [cells[1], 0]}
                     data.update(method_map)
