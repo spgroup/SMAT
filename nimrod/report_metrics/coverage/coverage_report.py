@@ -1,14 +1,13 @@
+import codecs
 import os
-from math import ceil
+
+from bs4 import BeautifulSoup
 
 from nimrod.setup_tools.setup_tool import Setup_tool
-from nimrod.tools.jacoco import Jacoco
 from nimrod.tools.bin import JACOCOAGENT
-from bs4 import BeautifulSoup
-import codecs
-
-
+from nimrod.tools.jacoco import Jacoco
 from nimrod.tools.suite_generator import Suite
+
 
 class Coverage_Report(Setup_tool):
     # scenario.merge_scenario.sut_class
@@ -52,8 +51,10 @@ class Coverage_Report(Setup_tool):
                                                   listaPacoteMetodoClasse[0])
 
     def get_valid_test_suite(self, toolSuites, first_entry, last_entry):
+        if len(toolSuites) <= 2:
+            return None;
         for i in range (first_entry, last_entry):
-            if (os.path.isdir(toolSuites[i][2]+"/classes")):
+            if (len(toolSuites) > first_entry and toolSuites[i] != None and toolSuites[i][2] != None and os.path.isdir(toolSuites[i][2]+"/classes")):
                 return toolSuites[i]
         return None
 
@@ -222,7 +223,6 @@ class Coverage_Report(Setup_tool):
     def reportMetodoTarget(self, path_suite, listaPacoteMetodoClasse):
         porcentagemBranchMetodoTarget = ''
         porcentagemInstrucMetodoTarget = ''
-        linhasCobertasMetodoTarget = ''
         tagSpanMetodoTarget = ''
         porcentagemCoberturaLinhasMetodoTarget = ''
 
