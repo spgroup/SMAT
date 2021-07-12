@@ -164,7 +164,7 @@ class JUnit:
         timeout = False
         flaky_test_set = set()
 
-        for i in range(0, 3):
+        for i in range(0, 1):
             for test_class in suite.test_classes:
                 result = self.exec_with_mutant(suite.suite_dir,
                                                suite.suite_classes_dir, sut_class,

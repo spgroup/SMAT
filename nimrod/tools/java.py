@@ -77,11 +77,17 @@ class Java:
         try:
             command = [program] + list(args)
 
+            print(command)
+
             return subprocess.check_output(command, cwd=cwd, env=env,
                                            timeout=timeout,
                                            stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             print(e)
+            raise e
+        except RuntimeError as e:
+            print(e)
+            RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
             raise e
         except subprocess.TimeoutExpired as e:
             print(e)

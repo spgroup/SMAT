@@ -30,7 +30,8 @@ class Setup_tool(ABC):
             print("Some project versions could not be evaluated")
 
     def run_tool_for_semantic_conflict_detection(self, evo, scenario, jarBase, jarParentLeft, jarParentRight, jarMerge,
-                                                 commitBaseSha, commitParentLeft, commitParentRight, commitMergeSha, tool):
+                                                 commitBaseSha, commitParentLeft, commitParentRight, commitMergeSha,
+                                                 tool, projectName=None):
         conflict_info = []
         try:
             self.setup_for_full_merge_scenario(evo, scenario, jarBase, jarParentLeft, jarParentRight, jarMerge)

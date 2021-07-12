@@ -31,7 +31,7 @@ class Project_dependecies:
         self.path_output_csv = self.config["path_output_csv"]
 
     def create_directory_test_destination(self):
-        path_directory = os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest"
+        path_directory = os.getcwd().replace("/nimrod/proj","/")+'output-test-dest' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest"
         if (os.path.isdir(path_directory) == False):
             os.mkdir(path_directory)
         return path_directory

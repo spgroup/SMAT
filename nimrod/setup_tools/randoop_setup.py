@@ -1,5 +1,6 @@
 from nimrod.setup_tools.setup_tool import Setup_tool
 from nimrod.tools.randoop import Randoop
+from nimrod.tools.randoopY import RandoopY
 from nimrod.tools.safira import Safira
 
 
