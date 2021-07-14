@@ -30,13 +30,11 @@ class Report_Writer:
 
             for key in data:
                 text = key + "," + self.get_comparsion(int(data.get(key)[0]), int(data.get(key)[1]))
-                text += "," + self.get_comparsion(int(data.get(key)[2]), int(data.get(key)[3]))
 
                 if is_object_report:
-                    text += "," + self.get_comparsion(int(data.get(key)[4]), int(data.get(key)[5]))
-                    text += "," + self.get_comparsion(int(data.get(key)[6]), int(data.get(key)[7])) + "\n"
+                    text += "," + self.get_comparsion(int(data.get(key)[2]), int(data.get(key)[3])) + "," + self.get_comparsion(float(data.get(key)[4]), float(data.get(key)[5])) + "," + self.get_comparsion(float(data.get(key)[6]), float(data.get(key)[7])) + "\n"
                 else:
-                    text += "\n"
+                    text += "," + self.get_comparsion(float(data.get(key)[2]), float(data.get(key)[3])) + "\n"
 
                 output_file.write(text)
 

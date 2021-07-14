@@ -22,7 +22,7 @@ class Target_Method_Metric(Metric):
                 cells = re.split("(?<=\"),", line)
                 aux = re.split(",", cells[1])
                 cells[1] = aux[0]
-                cells[2] = aux[1]
+                cells.append(aux[1])
                 if randoop_original_report:
                     method_map = {cells[0]: [cells[1], 0, cells[2], 0]}
                     data.update(method_map)
