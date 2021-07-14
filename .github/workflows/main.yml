@@ -42,4 +42,4 @@ jobs:
         cd /home/runner/work/SMAT/SMAT
     - name: Test with pytest
       run: |
-        pytest -k 'not test_behavior_change_detection'
+        pytest -k 'not test_general_behavior_study_semantic_conflict'
