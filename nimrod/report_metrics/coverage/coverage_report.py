@@ -1,14 +1,13 @@
+import codecs
 import os
-from math import ceil
+
+from bs4 import BeautifulSoup
 
 from nimrod.setup_tools.setup_tool import Setup_tool
-from nimrod.tools.jacoco import Jacoco
 from nimrod.tools.bin import JACOCOAGENT
-from bs4 import BeautifulSoup
-import codecs
-
-
+from nimrod.tools.jacoco import Jacoco
 from nimrod.tools.suite_generator import Suite
+
 
 class Coverage_Report(Setup_tool):
     # scenario.merge_scenario.sut_class
@@ -30,30 +29,41 @@ class Coverage_Report(Setup_tool):
         jacoco = Jacoco(java=evo.project_dep.java)
 
         for i in range(2):
-            toolOneSuites, i*4, (i*4)+3
-
             test_suite_tool_one = self.get_valid_test_suite(toolOneSuites, i*4, i*4+3)
             #dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, toolOneSuites[0][2], toolOneSuites[0][7], jacoco,
             if (test_suite_tool_one != None):
                 #self.test_suite = self.get_new_suite(test_suite_tool_one[2], test_suite_tool_one[7])
-                dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_tool_one, test_suite_tool_one[7], jacoco,
+                if (isinstance(test_suite_tool_one, list)):
+                    test_suite_commit = test_suite_tool_one[5]
+                    test_suite_path = test_suite_tool_one[2]
+                else:
+                    test_suite_path = test_suite_tool_one
+                    test_suite_commit = commitMerge
+
+                dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_path, test_suite_commit, jacoco,
                                                                          scenario.merge_scenario.sut_class,
                                                                          listaPacoteMetodoClasse)
-
                 test_suite_tool_two = self.get_valid_test_suite(toolTwoSuites, i*4, i*4+3)
                 if (test_suite_tool_two != None):
+
+                    if (isinstance(test_suite_tool_two, list)):
+                        test_suite_commit = test_suite_tool_two[5]
+                        test_suite_path = test_suite_tool_two[2]
+                    else:
+                        test_suite_path = test_suite_tool_two
+                        test_suite_commit = commitMerge
+
                     #self.test_suite = self.get_new_suite(test_suite_tool_two[2], test_suite_tool_two[7])
-                    dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_tool_two, test_suite_tool_two[7], jacoco,
+                    dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_path, test_suite_commit, jacoco,
                                                                              scenario.merge_scenario.sut_class,
                                                                              listaPacoteMetodoClasse)
-                    if (isinstance(test_suite_tool_one, list)):
-                        test_suite_commit = test_suite_tool_one[5]
-                    else:
-                        test_suite_commit = commitMerge
 
                     evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                                           listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, scenario.merge_scenario.sut_class,
                                           listaPacoteMetodoClasse[0])
+
+            if (isinstance(toolOneSuites, list) == False):
+                break;
 
     def get_valid_test_suite(self, toolSuites, first_entry, last_entry):
         if(isinstance(toolSuites, list) == False):
@@ -61,8 +71,9 @@ class Coverage_Report(Setup_tool):
                 return toolSuites
         else:
             for i in range (first_entry, last_entry):
-                if (os.path.isdir(toolSuites[i][2]+"/classes")):
+                if (len(toolSuites) > first_entry and toolSuites[i] != None and toolSuites[i][2] != None and os.path.isdir(toolSuites[i][2]+"/classes")):
                     return toolSuites[i]
+
         return None
 
     def retornaDadosParaAnalise(self, evo, path_suite, suite_merge, jacoco, classeTarget, listaPacoteMetodoClasse):
@@ -86,7 +97,7 @@ class Coverage_Report(Setup_tool):
         print("Iniciando execucao dos testes")
         #Instanciar um objeto aqui, e então realizar este run_test_suite
         #Importante mencionar, que seria necessário criar um objeto do tipo Suite...
-        self.test_suite = self.get_new_suite(path_suite, suite_merge)
+        self.test_suite = self.get_new_suite(path_suite)
 
         self.run_test_suite(listaJarInstrumentados, evo.project_dep.sut_class, listaJarInstrumentados,
                             evo.project_dep)
@@ -117,20 +128,40 @@ class Coverage_Report(Setup_tool):
         listaPacoteClasse.remove(nomeClasse)
         pacote = ".".join(listaPacoteClasse)
         nomeMetodo = pathMetodo[len(pathClasse) + 1:len(pathMetodo)]
-        nomeMetodo = self.ajustaNomeMetodo(nomeMetodo)
+        nomeMetodo = self.adjust_on_method_name(nomeMetodo)
         print("Metodo target: " + nomeMetodo)
         print("Classe target: " + nomeClasse)
         return [nomeMetodo, nomeClasse, pacote]
 
     # Ajusta nome do metodo removendo pacote do parametro dentro do metodo
     # Ex : getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema) ->  getSchemaFromAnnotation(Schema)
-    def ajustaNomeMetodo(self, nomeMetodo):
-        if ("(" in nomeMetodo) & (")" in nomeMetodo) & ("." in nomeMetodo):
-            print("Metodo target precisa de tratamento")
-            posicaoPrimeiroParentese = nomeMetodo.find("(")
-            posicaoUltimoPonto = nomeMetodo.rindex(".")
-            nomeMetodo = nomeMetodo[0:posicaoPrimeiroParentese + 1] + nomeMetodo[posicaoUltimoPonto + 1:len(nomeMetodo)] # contatena por exemplo getSchemaFromAnnotation( + Schema)
-        return nomeMetodo
+    def adjust_on_method_name(self, method_name):
+        if ("(" in method_name) & (")" in method_name) & ("." in method_name):
+            print("Required Adjust on Target Method Name")
+            first_parenthesis = method_name.find("(")
+            last_parenthesis = method_name.find(")")
+            parameters = self.adjust_on_parameters(method_name[first_parenthesis:last_parenthesis])
+            method_name = method_name[0:first_parenthesis + 1] + parameters + method_name[last_parenthesis] #")"# contatena por exemplo getSchemaFromAnnotation( + Schema)
+        return method_name
+
+    def adjust_on_parameters(self, parameters):
+        parameters_list = parameters.split(",")
+        adjusted_parameters = []
+        for item in range (len(parameters_list)):
+            if "." in parameters_list[item]:
+                posicaoUltimoPonto = parameters_list[item].rindex(".")
+                parameters_list[item] = parameters_list[item][posicaoUltimoPonto + 1:len(parameters_list[item])].replace("$", ".")
+            else:
+                parameters_list[item] = parameters_list[item][1:]
+            adjusted_parameters.append(parameters_list[item])
+
+        parameters = ""
+        for item in range(len(adjusted_parameters)):
+            parameters += adjusted_parameters[item]
+            if (item < len(adjusted_parameters)-1):
+                parameters += ", "
+
+        return parameters
 
     def reportProjetoCompleto(self, path_suite):
         reportHtml = codecs.open(path_suite + "/report/index.html", 'r')
@@ -210,7 +241,6 @@ class Coverage_Report(Setup_tool):
     def reportMetodoTarget(self, path_suite, listaPacoteMetodoClasse):
         porcentagemBranchMetodoTarget = ''
         porcentagemInstrucMetodoTarget = ''
-        linhasCobertasMetodoTarget = ''
         tagSpanMetodoTarget = ''
         porcentagemCoberturaLinhasMetodoTarget = ''
 
@@ -254,8 +284,8 @@ class Coverage_Report(Setup_tool):
         return [vaiGerarReportMetodo, porcentagemCoberturaLinhasMetodoTarget, porcentagemInstrucMetodoTarget,
                 porcentagemBranchMetodoTarget]
 
-    def get_new_suite(self, path_suite_dir, suite_merge):
-        return Suite(suite_name=path_suite_dir.split(suite_merge+"/")[0], suite_dir=path_suite_dir,
+    def get_new_suite(self, path_suite_dir):
+        return Suite(suite_name=path_suite_dir, suite_dir=path_suite_dir,
                      suite_classes_dir=path_suite_dir+"/classes",
                      test_classes=['RegressionTest', 'ErrorTest'])
 
