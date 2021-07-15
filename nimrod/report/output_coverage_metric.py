@@ -4,7 +4,7 @@ from nimrod.report.output import Output
 class Output_coverage_metric(Output):
 
     def get_file_collumn_names(self):
-        listaPartesBasicasReport = ["target_commit", "test_suite_commit", "project_name"]
+        listaPartesBasicasReport = ["target_commit", "test_suite_commit", "project_name", "path_suite_one", "path_suite_two"]
         listaCoberturaProjeto = ["randoop X: method coverage SUA", "randoop Y: method coverage SUA",
                                  "randoop X: class coverage SUA", "randoop Y: class coverage SUA",
                                  "randoop X: line coverage SUA", "randoop Y: line coverage SUA"]
@@ -16,20 +16,20 @@ class Output_coverage_metric(Output):
 
         return listaPartesBasicasReport + listaCoberturaProjeto + listaCoberturaClasse + listaCoberturaMetodo
 
-    def write_output_line(self, commitVersion, test_suite_commit, projectName, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
+    def write_output_line(self, commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                           listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, classeTarget, nomeMetodoTarget):
         if (os.path.isfile(self.output_file_path) == False):
             self.create_result_file()
         else:
-            self.write_each_result(self.formate_output_line(commitVersion, test_suite_commit, projectName, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
+            self.write_each_result(self.formate_output_line(commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                                                             listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, classeTarget, nomeMetodoTarget))
 
-    def formate_output_line(self, commitVersion, test_suite_commit, projectName, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
+    def formate_output_line(self, commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                             listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, classeTarget, nomeMetodoTarget):
         try:
             if (dadosParaGravacaoRandoopX[1][0] is True) & (dadosParaGravacaoRandoopY[1][0] is True): # se possuir classe target
                 if (dadosParaGravacaoRandoopX[2][0] is True) & (dadosParaGravacaoRandoopY[2][0] is True): # se possuir metodo target
-                    return [commitVersion, test_suite_commit, projectName, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
+                    return [commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
                                      dadosParaGravacaoRandoopX[0][0], dadosParaGravacaoRandoopY[0][0], dadosParaGravacaoRandoopX[0][2],
                                      dadosParaGravacaoRandoopY[0][2], classeTarget, dadosParaGravacaoRandoopX[1][2],
                                      dadosParaGravacaoRandoopY[1][2], dadosParaGravacaoRandoopX[1][1], dadosParaGravacaoRandoopY[1][1],
@@ -37,7 +37,7 @@ class Output_coverage_metric(Output):
                                      dadosParaGravacaoRandoopX[2][2], dadosParaGravacaoRandoopY[2][2], dadosParaGravacaoRandoopX[2][3],
                                      dadosParaGravacaoRandoopY[2][3]]
                 else:
-                   return [commitVersion, test_suite_commit, projectName, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
+                   return [commitVersion, test_suite_commit, path_suite_one, path_suite_two, projectName, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
                                      dadosParaGravacaoRandoopX[0][0], dadosParaGravacaoRandoopY[0][0], dadosParaGravacaoRandoopX[0][2],
                                      dadosParaGravacaoRandoopY[0][2], classeTarget, dadosParaGravacaoRandoopX[1][2],
                                      dadosParaGravacaoRandoopY[1][2], dadosParaGravacaoRandoopX[1][1], dadosParaGravacaoRandoopY[1][1],
@@ -45,7 +45,7 @@ class Output_coverage_metric(Output):
                                      "", "", "",
                                      ""]
             else:
-                return [commitVersion, test_suite_commit, projectName, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
+                return [commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
                         dadosParaGravacaoRandoopX[0][0], dadosParaGravacaoRandoopY[0][0], dadosParaGravacaoRandoopX[0][2],
                         dadosParaGravacaoRandoopY[0][2], "", "",
                         "", "", "",
@@ -54,4 +54,4 @@ class Output_coverage_metric(Output):
                         ""]
         except Exception as e:
             print(e)
-        return [commitVersion, "", projectName, "","","","","","","","","","","","","","","","","",""]
+        return [commitVersion, "", projectName, "", "", "","","","","","","","","","","","","","","","","",""]

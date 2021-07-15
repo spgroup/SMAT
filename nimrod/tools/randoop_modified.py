@@ -21,7 +21,7 @@ class Randoop_Modified(SuiteGenerator):
             'randoop.main.Main',
             'gentests',
             '--randomseed=10',
-            '--time-limit=10',
+            '--time-limit=300',
             '--junit-output-dir=' + self.suite_dir
         ]
 
@@ -30,7 +30,7 @@ class Randoop_Modified(SuiteGenerator):
         return self._exec(*tuple(params))
 
     def _test_classes(self):
-        return ['RegressionTest']
+        return ['RegressionTest', 'ErrorTest']
 
     def generate_with_impact_analysis(self, impact_analysis, method_analysis):
         method_list = ""

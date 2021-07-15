@@ -35,12 +35,12 @@ class Coverage_Report(Setup_tool):
                 #self.test_suite = self.get_new_suite(test_suite_tool_one[2], test_suite_tool_one[7])
                 if (isinstance(test_suite_tool_one, list)):
                     test_suite_commit = test_suite_tool_one[5]
-                    test_suite_path = test_suite_tool_one[2]
+                    test_suite_path_one = test_suite_tool_one[2]
                 else:
-                    test_suite_path = test_suite_tool_one
+                    test_suite_path_one = test_suite_tool_one
                     test_suite_commit = commitMerge
 
-                dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_path, test_suite_commit, jacoco,
+                dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_path_one, test_suite_commit, jacoco,
                                                                          scenario.merge_scenario.sut_class,
                                                                          listaPacoteMetodoClasse)
                 test_suite_tool_two = self.get_valid_test_suite(toolTwoSuites, i*4, i*4+3)
@@ -48,17 +48,17 @@ class Coverage_Report(Setup_tool):
 
                     if (isinstance(test_suite_tool_two, list)):
                         test_suite_commit = test_suite_tool_two[5]
-                        test_suite_path = test_suite_tool_two[2]
+                        test_suite_path_two = test_suite_tool_two[2]
                     else:
-                        test_suite_path = test_suite_tool_two
+                        test_suite_path_two = test_suite_tool_two
                         test_suite_commit = commitMerge
 
                     #self.test_suite = self.get_new_suite(test_suite_tool_two[2], test_suite_tool_two[7])
-                    dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_path, test_suite_commit, jacoco,
+                    dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_path_two, test_suite_commit, jacoco,
                                                                              scenario.merge_scenario.sut_class,
                                                                              listaPacoteMetodoClasse)
 
-                    evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
+                    evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, test_suite_path_one, test_suite_path_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                                           listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, scenario.merge_scenario.sut_class,
                                           listaPacoteMetodoClasse[0])
 
