@@ -45,6 +45,10 @@ class TestJacoco(TestCase):
         coverage_report = Coverage_Report()
         self.assertEqual("outerHtmlHead(StringBuilder, OutputSettings)", coverage_report.adjust_on_method_name("outerHtmlHead(java.lang.StringBuilder, org.jsoup.nodes.OutputSettings)"))
 
+    def test_method_adjust_with_inner_class_types(self):
+        coverage_report = Coverage_Report()
+        self.assertEqual("outerHtmlHead(StringBuilder, int, Document.OutputSettings)", coverage_report.adjust_on_method_name("outerHtmlHead(java.lang.StringBuilder, int, org.jsoup.nodes.Document$OutputSettings)"))
+
     def test_method_adjust_with_primitive_types(self):
         coverage_report = Coverage_Report()
         self.assertEqual("outerHtmlHead(StringBuilder, int, String, OutputSettings)", coverage_report.adjust_on_method_name("outerHtmlHead(java.lang.StringBuilder, int, String, org.jsoup.nodes.OutputSettings)"))

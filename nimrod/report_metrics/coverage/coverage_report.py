@@ -132,7 +132,7 @@ class Coverage_Report(Setup_tool):
         for item in range (len(parameters_list)):
             if "." in parameters_list[item]:
                 posicaoUltimoPonto = parameters_list[item].rindex(".")
-                parameters_list[item] = parameters_list[item][posicaoUltimoPonto + 1:len(parameters_list[item])]
+                parameters_list[item] = parameters_list[item][posicaoUltimoPonto + 1:len(parameters_list[item])].replace("$", ".")
             else:
                 parameters_list[item] = parameters_list[item][1:]
             adjusted_parameters.append(parameters_list[item])
