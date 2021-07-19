@@ -1,3 +1,6 @@
+import os
+import filecmp
+import zipfile
 from nimrod.tools.bin import JACOCOCLI, JACOCOAGENT, JUNIT, HAMCREST
 from nimrod.utils import generate_classpath
 
@@ -46,9 +49,10 @@ class Jacoco:
     # caminhoJacocoExec = local do arquivo jacocoExec
     # classFiles = local do arquivo class da classe alvo dos testes.
     # localHtmlGerado = arquivo para criacao do report html.
-    def generateReportHtml(self, jacocoExecDir, classFiles):
+    def generateReportHtml(self, jacocoExecDir, classFiles, targetClass):
         novoClassFile = classFiles
         if type(classFiles) == list: # tratamento para caso receber uma lista de jars
+            classFiles = self.adjustOnListOfJars(classFiles, targetClass)
             novoClassFile = ""
             for i in range(len(classFiles)):
                 novoClassFile = novoClassFile + classFiles[i]
@@ -65,3 +69,37 @@ class Jacoco:
 
     def execJava(self, *params):
         return self.java.simple_exec_java(*params)
+
+    def adjustOnListOfJars(self, allJars, className):
+        if (self.isListOfJarsWithTargetClass(allJars, className) == False):
+            return allJars
+        else:
+            bestOption = ""
+            firstJarWithClass = False
+            for jarFile in allJars:
+                if (self.isClassOnJar(jarFile, className)):
+                    if (firstJarWithClass == False):
+                        bestOption = jarFile
+                        firstJarWithClass = True
+                    else:
+                        if (os.stat(bestOption).st_size < os.stat(jarFile).st_size):
+                            allJars.remove(bestOption)
+                            bestOption = jarFile
+                        else:
+                            allJars.remove(jarFile)
+            return allJars
+
+    def isListOfJarsWithTargetClass(self, jarFiles, className):
+        numberOfJarsWithTargetClass = 0
+        for jarFile in jarFiles:
+            if self.isClassOnJar(jarFile, className):
+                numberOfJarsWithTargetClass += 1
+
+        if (numberOfJarsWithTargetClass > 1):
+            return True
+        else:
+            return False
+
+    def isClassOnJar(self, jarFile, className):
+        archive = zipfile.ZipFile(jarFile, 'r')
+        return className.replace(".","/")+".class" in archive.namelist()

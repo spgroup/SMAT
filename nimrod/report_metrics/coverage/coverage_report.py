@@ -28,42 +28,45 @@ class Coverage_Report(Setup_tool):
 
         jacoco = Jacoco(java=evo.project_dep.java)
 
-        for i in range(2):
-            test_suite_tool_one = self.get_valid_test_suite(toolOneSuites, i*4, i*4+3)
-            #dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, toolOneSuites[0][2], toolOneSuites[0][7], jacoco,
-            if (test_suite_tool_one != None):
-                #self.test_suite = self.get_new_suite(test_suite_tool_one[2], test_suite_tool_one[7])
-                if (isinstance(test_suite_tool_one, list)):
-                    test_suite_commit = test_suite_tool_one[5]
-                    test_suite_path_one = test_suite_tool_one[2]
-                else:
-                    test_suite_path_one = test_suite_tool_one
-                    test_suite_commit = commitMerge
-
-                dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_path_one, test_suite_commit, jacoco,
-                                                                         scenario.merge_scenario.sut_class,
-                                                                         listaPacoteMetodoClasse)
-                test_suite_tool_two = self.get_valid_test_suite(toolTwoSuites, i*4, i*4+3)
-                if (test_suite_tool_two != None):
-
-                    if (isinstance(test_suite_tool_two, list)):
-                        test_suite_commit = test_suite_tool_two[5]
-                        test_suite_path_two = test_suite_tool_two[2]
+        try:
+            for i in range(2):
+                test_suite_tool_one = self.get_valid_test_suite(toolOneSuites, i*4, i*4+3)
+                #dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, toolOneSuites[0][2], toolOneSuites[0][7], jacoco,
+                if (test_suite_tool_one != None):
+                    #self.test_suite = self.get_new_suite(test_suite_tool_one[2], test_suite_tool_one[7])
+                    if (isinstance(test_suite_tool_one, list)):
+                        test_suite_commit = test_suite_tool_one[5]
+                        test_suite_path_one = test_suite_tool_one[2]
                     else:
-                        test_suite_path_two = test_suite_tool_two
+                        test_suite_path_one = test_suite_tool_one
                         test_suite_commit = commitMerge
 
-                    #self.test_suite = self.get_new_suite(test_suite_tool_two[2], test_suite_tool_two[7])
-                    dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_path_two, test_suite_commit, jacoco,
+                    dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_path_one, test_suite_commit, jacoco,
                                                                              scenario.merge_scenario.sut_class,
                                                                              listaPacoteMetodoClasse)
+                    test_suite_tool_two = self.get_valid_test_suite(toolTwoSuites, i*4, i*4+3)
+                    if (test_suite_tool_two != None):
 
-                    evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, test_suite_path_one, test_suite_path_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
-                                          listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, scenario.merge_scenario.sut_class,
-                                          listaPacoteMetodoClasse[0])
+                        if (isinstance(test_suite_tool_two, list)):
+                            test_suite_commit = test_suite_tool_two[5]
+                            test_suite_path_two = test_suite_tool_two[2]
+                        else:
+                            test_suite_path_two = test_suite_tool_two
+                            test_suite_commit = commitMerge
 
-            if (isinstance(toolOneSuites, list) == False):
-                break;
+                        #self.test_suite = self.get_new_suite(test_suite_tool_two[2], test_suite_tool_two[7])
+                        dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_path_two, test_suite_commit, jacoco,
+                                                                                 scenario.merge_scenario.sut_class,
+                                                                                 listaPacoteMetodoClasse)
+
+                        evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, test_suite_path_one, test_suite_path_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
+                                              listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, scenario.merge_scenario.sut_class,
+                                              listaPacoteMetodoClasse[0])
+
+                if (isinstance(toolOneSuites, list) == False):
+                    break;
+        except Exception as e:
+            print(e)
 
     def get_valid_test_suite(self, toolSuites, first_entry, last_entry):
         if(isinstance(toolSuites, list) == False):
@@ -105,7 +108,7 @@ class Coverage_Report(Setup_tool):
         listaJar = list(filter(lambda x: x != '', listaJar))  # filtra registros vazios da lista
 
         print("Gerando report em html")
-        jacoco.generateReportHtml(path_suite, listaJar)
+        jacoco.generateReportHtml(path_suite, listaJar, classeTarget)
 
         print("Gerando analise de todas classes do projeto")
         dadosReportProjeto = self.reportProjetoCompleto(path_suite)
