@@ -37,7 +37,7 @@ class Output_coverage_metric(Output):
                                      dadosParaGravacaoRandoopX[2][2], dadosParaGravacaoRandoopY[2][2], dadosParaGravacaoRandoopX[2][3],
                                      dadosParaGravacaoRandoopY[2][3]]
                 else:
-                   return [commitVersion, test_suite_commit, path_suite_one, path_suite_two, projectName, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
+                   return [commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
                                      dadosParaGravacaoRandoopX[0][0], dadosParaGravacaoRandoopY[0][0], dadosParaGravacaoRandoopX[0][2],
                                      dadosParaGravacaoRandoopY[0][2], classeTarget, dadosParaGravacaoRandoopX[1][2],
                                      dadosParaGravacaoRandoopY[1][2], dadosParaGravacaoRandoopX[1][1], dadosParaGravacaoRandoopY[1][1],
@@ -45,7 +45,7 @@ class Output_coverage_metric(Output):
                                      "", "", "",
                                      ""]
             else:
-                return [commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
+                return [commitVersion, test_suite_commit, path_suite_one, path_suite_two, projectName, dadosParaGravacaoRandoopX[0][1], dadosParaGravacaoRandoopY[0][1],
                         dadosParaGravacaoRandoopX[0][0], dadosParaGravacaoRandoopY[0][0], dadosParaGravacaoRandoopX[0][2],
                         dadosParaGravacaoRandoopY[0][2], "", "",
                         "", "", "",
