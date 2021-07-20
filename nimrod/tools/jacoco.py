@@ -87,7 +87,7 @@ class Jacoco:
                             bestOption = jarFile
                         else:
                             allJars.remove(jarFile)
-            return allJars
+            return self.compareJars(allJars, className)
 
     def isListOfJarsWithTargetClass(self, jarFiles, className):
         numberOfJarsWithTargetClass = 0
@@ -103,3 +103,43 @@ class Jacoco:
     def isClassOnJar(self, jarFile, className):
         archive = zipfile.ZipFile(jarFile, 'r')
         return className.replace(".","/")+".class" in archive.namelist()
+
+    def compareJars(self, listOfJars, classTarget):
+        bestJars = []
+        for i in range(len(listOfJars)):
+            for j in range(i, int(len(listOfJars)-1)):
+                if (self.isAnyDuplicatedClassOnTheseFiles(listOfJars[i], listOfJars[j]) == True):
+                    if (os.stat(listOfJars[i]).st_size >= os.stat(listOfJars[j]).st_size):
+                        if (listOfJars[j] in bestJars):
+                            bestJars.remove(listOfJars[j])
+                        if ((listOfJars[i] in bestJars) == False and self.compareJarsWithJar(bestJars, listOfJars[i])):
+                            bestJars.append(listOfJars[i])
+                    elif (os.stat(listOfJars[j]).st_size >= os.stat(listOfJars[i]).st_size):
+                        if (listOfJars[i] in bestJars):
+                            bestJars.remove(listOfJars[i])
+                        if ((listOfJars[j] in bestJars) == False and self.compareJarsWithJar(bestJars, listOfJars[j])):
+                            bestJars.append(listOfJars[j])
+                elif ((listOfJars[j] in bestJars) == False):
+                        bestJars.append(listOfJars[j])
+
+
+        if len(bestJars) > 0:
+            return bestJars
+        else:
+            return listOfJars
+
+    def compareJarsWithJar(self, allJars, jar):
+        for oneJar in allJars:
+            if (self.isAnyDuplicatedClassOnTheseFiles(oneJar, jar)):
+                return False
+
+        return True
+
+    def isAnyDuplicatedClassOnTheseFiles(self, jarOne, jartwo):
+        archive = zipfile.ZipFile(jarOne, 'r').namelist()
+        archiveTwo = zipfile.ZipFile(jartwo, 'r').namelist()
+        intersection_set = set.intersection(set(archive), set(archiveTwo))
+        if (len(intersection_set)) > 0:
+            return True
+        else:
+            return False

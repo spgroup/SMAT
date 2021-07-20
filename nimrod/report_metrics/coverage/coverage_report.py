@@ -132,6 +132,7 @@ class Coverage_Report(Setup_tool):
         pacote = ".".join(listaPacoteClasse)
         nomeMetodo = pathMetodo[len(pathClasse) + 1:len(pathMetodo)]
         nomeMetodo = self.adjust_on_method_name(nomeMetodo)
+        #nomeClasse = nomeClasse.replace("$",".")
         print("Metodo target: " + nomeMetodo)
         print("Classe target: " + nomeClasse)
         return [nomeMetodo, nomeClasse, pacote]
@@ -208,7 +209,7 @@ class Coverage_Report(Setup_tool):
 
         tagsA = soup.find_all('a')  # recupera todas as tags a
 
-        nomeClasseTarget = listaPacoteMetodoClasse[1]
+        nomeClasseTarget = listaPacoteMetodoClasse[1].replace("$",".")
 
         for i in range(len(tagsA)):
             if tagsA[i].get_text() == nomeClasseTarget:  # dentro das tags a escolhe a tag referente a classe target
