@@ -1,4 +1,4 @@
-'''import os
+import os
 import shutil
 import unittest
 
@@ -60,4 +60,3 @@ class TestNimrod(TestCase):
 
         shutil.rmtree(output_dir)
         self.assertEqual(3, len(results))
-'''
