@@ -1,5 +1,6 @@
 import os
-import filecmp
+import re
+import subprocess
 import zipfile
 from nimrod.tools.bin import JACOCOCLI, JACOCOAGENT, JUNIT, HAMCREST
 from nimrod.utils import generate_classpath
@@ -11,12 +12,50 @@ class Jacoco:
 
     # Run java -jar jacococli.jar instrument project_jar --dest dest_jar_instrumented
     def execInstrumentJar(self, projectJar, destJarinstrumented):
-        params = [
-            '-jar', JACOCOCLI,
-            'instrument', projectJar,
-            '--dest', destJarinstrumented
-        ]
-        return self.execJava(*params)
+        error = "error caused by duplicated entry"
+        first_attempt = True
+        while(error.find("duplicated entry")):
+            if (first_attempt or self.dealingWithDuplicatedFilesOnJars(projectJar, error)):
+                try:
+                    params = [
+                        '-jar', JACOCOCLI,
+                        'instrument', projectJar,
+                        '--dest', destJarinstrumented
+                    ]
+                    return self.execJava(*params)
+                except subprocess.CalledProcessError as e:
+                    error = str(e.stdout)
+                except Exception as e:
+                    error = ""
+                first_attempt = False
+            else:
+                break
+
+    def dealingWithDuplicatedFilesOnJars(self, jarFile, message_error):
+        if ("java.util.zip.ZipException:" in message_error):
+            message_error = message_error.split("java.util.zip.ZipException:")[1].split("\\n\\tat")[0].replace("\n\tat","")
+            fileToRemove = self.parseDuplicatedFile(str(message_error))
+            if (fileToRemove != None):
+                try:
+                    proc = subprocess.Popen("zip -d "+jarFile+" "+fileToRemove, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    if ("zip warning: name not matched" in str((proc.stdout.readline()))):
+                        return False
+                    else:
+                        return True
+                except subprocess.CalledProcessError as e:
+                    raise e
+        return False
+
+    def parseDuplicatedFile(self, message_error):
+        "Exception in thread \"main\" java.util.zip.ZipException: duplicate entry: META-INF/LICENSE.txt"
+        x = re.search("duplicate entry\: .*", message_error, re.IGNORECASE)
+        if x:
+            fileName = str(message_error.split("duplicate entry: ")[1]).split("\n")[0]
+            if ("$" in fileName):
+                fileName = fileName.split("$")[0]+".class"
+            return fileName
+        else:
+            return None
 
     # projectJar = jar instrumentado do projeto
     # suite_class = local do arquivo class da suite de testes
@@ -71,23 +110,20 @@ class Jacoco:
         return self.java.simple_exec_java(*params)
 
     def adjustOnListOfJars(self, allJars, className):
-        if (self.isListOfJarsWithTargetClass(allJars, className) == False):
-            return allJars
-        else:
-            bestOption = ""
-            firstJarWithClass = False
-            for jarFile in allJars:
-                if (self.isClassOnJar(jarFile, className)):
-                    if (firstJarWithClass == False):
+        bestOption = ""
+        firstJarWithClass = False
+        for jarFile in allJars:
+            if (self.isClassOnJar(jarFile, className)):
+                if (firstJarWithClass == False):
+                    bestOption = jarFile
+                    firstJarWithClass = True
+                else:
+                    if (os.stat(bestOption).st_size < os.stat(jarFile).st_size):
+                        allJars.remove(bestOption)
                         bestOption = jarFile
-                        firstJarWithClass = True
                     else:
-                        if (os.stat(bestOption).st_size < os.stat(jarFile).st_size):
-                            allJars.remove(bestOption)
-                            bestOption = jarFile
-                        else:
-                            allJars.remove(jarFile)
-            return self.compareJars(allJars, className)
+                        allJars.remove(jarFile)
+        return self.compareJars(allJars, className)
 
     def isListOfJarsWithTargetClass(self, jarFiles, className):
         numberOfJarsWithTargetClass = 0
