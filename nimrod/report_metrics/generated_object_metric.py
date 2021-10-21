@@ -21,13 +21,15 @@ class Generated_Object_Metric(Metric):
             for line in lines[1:-1]:  # Exclude the first one because contains the headers and the last one because it is a empty line
                 cells = line.split(",")
                 if randoop_original_report:
-                    object_map = {cells[0]: [cells[1], 0, cells[2], 0]}
+                    object_map = {cells[0]: [cells[1], 0, cells[2], 0, cells[3], 0, cells[4], 0]}
                     data.update(object_map)
                 elif cells[0] in data:  # If the class is already in the dictionary, just change the value in the list
                     data.get(cells[0])[1] = cells[1]
                     data.get(cells[0])[3] = cells[2]
+                    data.get(cells[0])[5] = cells[3]
+                    data.get(cells[0])[7] = cells[4]
                 else:
-                    object_map = {cells[0]: [0, cells[1], 0, cells[2]]}
+                    object_map = {cells[0]: [0, cells[1], 0, cells[2], 0, cells[3], 0, cells[4]]}
                     data.update(object_map)
 
             return data
