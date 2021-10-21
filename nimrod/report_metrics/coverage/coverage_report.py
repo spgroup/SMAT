@@ -12,7 +12,7 @@ from nimrod.tools.suite_generator import Suite
 class Coverage_Report(Setup_tool):
     # scenario.merge_scenario.sut_class
 
-    def generate_report(self, evo, scenario, commitMerge, toolOneSuites, toolTwoSuites, projectName):
+    def generate_report(self, evo, scenario, commitMerge, toolOneSuites, toolTwoSuites, projectName, jar_type=None):
         listaPacoteMetodoClasse = self.recuperaClassePacoteMetodo(scenario.merge_scenario.sut_method.replace("|", ","), scenario.merge_scenario.sut_class)
 
         listaPartesBasicasReport = ["target_commit", "test_suite_commit", "projeto"]
@@ -61,7 +61,7 @@ class Coverage_Report(Setup_tool):
 
                         evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, test_suite_path_one, test_suite_path_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                                               listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, scenario.merge_scenario.sut_class,
-                                              listaPacoteMetodoClasse[0])
+                                              listaPacoteMetodoClasse[0], jar_type)
 
                 if (isinstance(toolOneSuites, list) == False):
                     break;

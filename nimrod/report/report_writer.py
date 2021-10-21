@@ -52,4 +52,4 @@ class Report_Writer:
             relative = str(round(relative, 2)).replace(".", ",")
 
         return str(number_original) + "," + str(number_modified) + "," + str(
-            sub) + "," + "\"" + relative + "\"%"
+            sub) + "," + "\"" + relative + "%\""
