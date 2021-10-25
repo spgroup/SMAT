@@ -8,7 +8,7 @@ class Behaviour_check:
         if len(selected_cases) > 0:
             detected_behavior_change = True
 
-        return [detected_behavior_change, selected_cases, path_suite[1], "BEHAVIOR-CHANGE-COMMIT-PAIR", commitOneSHA, commitTwoSHA,
+        return [detected_behavior_change, selected_cases, path_suite[1], "BEHAVIOR_CHANGE_COMMIT_PAIR", commitOneSHA, commitTwoSHA,
                 "NOT-REQUIRED", "NOT-REQUIRED", tool, parent_one.flaky_test_set.intersection(parent_two.flaky_test_set)]
 
     def get_test_cases_with_files(self, selected_cases, test_cases_with_files):
@@ -29,7 +29,7 @@ class Behaviour_check:
         if len(selected_cases) > 0:
             detected_behavior_change = True
 
-        return [detected_behavior_change, selected_cases, path_suite[1], "FIRST CRITERION", commitBase, commitParentTestSuite, "NOT_REQUIRED", commitMerge, tool, parent_one.flaky_test_set]
+        return [detected_behavior_change, selected_cases, path_suite[1], "FIRST_CRITERION", commitBase, commitParentTestSuite, "NOT-REQUIRED", commitMerge, tool, parent_one.flaky_test_set]
 
     def check_conflict_occurrence_for_second_criterion(self, parent_base, parent_left, parent_right, parent_merge, path_suite, commitBase, commitParentTestSuite, commitParentOther, commitMerge, tool):
         not_executed_tests = parent_base.not_executed_test_set.union(parent_left.not_executed_test_set, parent_right.not_executed_test_set, parent_merge.not_executed_test_set)
@@ -46,4 +46,4 @@ class Behaviour_check:
         if len(final_selected_cases) > 0:
             detected_behavior_change = True
 
-        return [detected_behavior_change, final_selected_cases, path_suite[1], "SECOND-CRITERION", commitBase, commitParentTestSuite, commitParentOther, commitMerge, tool, parent_base.flaky_test_set]
+        return [detected_behavior_change, final_selected_cases, path_suite[1], "SECOND_CRITERION", commitBase, commitParentTestSuite, commitParentOther, commitMerge, tool, parent_base.flaky_test_set]

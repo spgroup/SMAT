@@ -49,7 +49,7 @@ class Report_Writer:
             relative = "-INF"
         else:
             relative = (sub / number_original) * 100
-            relative = str(round(relative, 2)).replace(".", ",")
+            relative = str(round(relative, 2))
 
         return str(number_original) + "," + str(number_modified) + "," + str(
             sub) + "," + "\"" + relative + "%\""
