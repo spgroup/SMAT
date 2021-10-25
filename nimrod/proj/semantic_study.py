@@ -11,6 +11,7 @@ from nimrod.report.output_report import Output_report
 from nimrod.report.output_semantic_conflicts import Output_semantic_conflicts
 from nimrod.report_metrics.coverage.coverage_report import Coverage_Report
 from nimrod.report.report_analysis import Report_Analysis
+from nimrod.report.result_summary import Result_Summary
 from nimrod.setup_tools.evosuite_diff_setup import Evosuite_Diff_setup
 from nimrod.setup_tools.evosuite_setup import Evosuite_setup
 from nimrod.setup_tools.randoop_modified_setup import Randoop_Modified_setup
@@ -39,6 +40,7 @@ class semantic_study:
         self.output_coverage_metric = Output_coverage_metric(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "result_cobertura")
 
         self.output_report = Output_report(config["path_output_csv"])
+        self.results_summary = Result_Summary(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "results_summary");
 
     def set_git_project(self, path):
         self.project = GitProject(path)
@@ -54,10 +56,14 @@ if __name__ == '__main__':
     config = get_config()
     with open(config['path_hash_csv']) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
+        local_file_result = ""
+        local_file_coverage = ""
         for row in csv_reader:
             if row[1] == "true":
                 print("Semantic Conflict Analysis")
                 semantic_study_obj = semantic_study(project_name=row[0])
+                local_file_result = semantic_study_obj.output_semantic_conflict.output_file_path
+                local_file_coverage = semantic_study_obj.output_coverage_metric.output_file_path
                 coverage_report = Coverage_Report()
                 merge = MergeScenario(merge_information=row)
                 for i in range(0, 1):
@@ -71,3 +77,5 @@ if __name__ == '__main__':
                     semantic_study_obj.output_semantic_conflict.write_output_line(row[0], randoop_modified, row[6], row[7], row[14])
                     semantic_study_obj.report_analysis.start_analysis(randoop, randoop_modified)
                     coverage_report.generate_report(semantic_study_obj, merge, row[2], randoop, randoop_modified, row[0], row[14])
+
+        semantic_study_obj.results_summary.generate_summary(local_file_result, local_file_coverage);
