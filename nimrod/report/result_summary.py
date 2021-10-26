@@ -42,6 +42,8 @@ class Result_Summary(Output):
                 current_target_method = values[11]
                 merge_scenario_values = []
                 merge_scenario_values.append(values)
+                parent_one = ""
+                parent_two = ""
 
         if(len(merge_scenario_values)>0):
             self.summary_by_target_method(merge_scenario_values, parent_one, parent_two, "transformed")
@@ -52,8 +54,8 @@ class Result_Summary(Output):
             if (summary_line[3]+"-"+summary_line[4] in self.randoop_suites and summary_line[3]+"-"+summary_line[4] in self.randoop_mod_suites):
                 suite_original = self.randoop_suites[summary_line[3]+"-"+summary_line[4]][0]
                 suite_modified = self.randoop_mod_suites[summary_line[3]+"-"+summary_line[4]][0]
-                comparison = self.get_value_metric_object_creation(suite_original, suite_modified, summary_line[3].split(" | ")[0].replace("$","."),
-                                                summary_line[1], summary_line[2])
+                comparison = self.get_value_metric_object_creation(suite_original, suite_modified, str(summary_line[3]).split(" | ")[0].replace("$","."),
+                                                                   str(summary_line[1]).split("(")[0], summary_line[2])
 
                 coverage_report = open(coverage_report_file)
                 coverage_report_info = coverage_report.read()
@@ -65,8 +67,34 @@ class Result_Summary(Output):
                     values = line.split(",");
                     if (suite_original == values[3] and suite_modified == values[4] and summary_line[3] == values[0] and summary_line[4] == values[1]):
                         try:
-                            summary_line[14] = float(values[15])>float(values[14])
-                            summary_line[15] = float(values[18])>float(values[17])
+                            line_coverage_original = 0
+                            line_coverage_modified = 0
+                            if (values[15] != ""):
+                                line_coverage_modified = float(values[15])
+                            if (values[14] != ""):
+                                line_coverage_original = float(values[14])
+
+                            method_coverage_original = 0
+                            method_coverage_modified = 0
+                            if (values[18] != ""):
+                                method_coverage_modified = float(values[18])
+                            if (values[17] != ""):
+                                method_coverage_original = float(values[17])
+
+                            if (line_coverage_modified > line_coverage_original):
+                                summary_line[14] = True
+                            elif (line_coverage_modified == line_coverage_original):
+                                summary_line[14] = "SAME"
+                            else:
+                                summary_line[14] = False
+
+                            if (method_coverage_modified > method_coverage_original):
+                                summary_line[15] = True
+                            elif (method_coverage_modified == method_coverage_original):
+                                summary_line[15] = "SAME"
+                            else:
+                                summary_line[15] = False
+
                         except Exception:
                             print("It was not possible to get coverage information. \n")
 
@@ -79,6 +107,8 @@ class Result_Summary(Output):
             self.write_output_line(summary_line)
 
     def get_value_metric_object_creation(self, path_original, path_modified, merge_scenario, target_class, target_method):
+        target_class = target_class.split(" | ")[0]
+        target_method = target_method.split("(")[0]
         target_method_comparison = ""
         target_class_comparison = ""
         if (path_original.split(merge_scenario)[0]+merge_scenario+"/reports" == path_modified.split(merge_scenario)[0]+merge_scenario+"/reports"):
@@ -91,7 +121,13 @@ class Result_Summary(Output):
                 for line in lines[1:]:
                     values = line.split(",");
                     if (target_class+"."+target_method in values[0]):
-                        target_method_comparison = values[8].replace("\"","")
+                        if (values[8] != ""):
+                            target_method_comparison = values[8].replace("\"","")
+                        else:
+                            target_method_comparison = 0
+                        break
+                if (target_method_comparison == ""):
+                    target_method_comparison = "UNAVAILABLE-INFORMATION"
 
         if (os.path.exists(path_original.split(merge_scenario)[0]+merge_scenario+"/reports/objects_report_"+str(path_original.split("/")[-1])+"_"+str(path_modified.split("/")[-1])+".csv")):
             report_original_modified_randoop_file = open(path_original.split(merge_scenario)[0]+merge_scenario+"/reports/objects_report_"+str(path_original.split("/")[-1])+"_"+str(path_modified.split("/")[-1])+".csv")
@@ -102,7 +138,13 @@ class Result_Summary(Output):
             for line in lines[1:]:
                 values = line.split(",");
                 if ("class "+str(target_class) == values[0]):
-                    target_class_comparison = values[16].replace("\"","")
+                    if (values[16] != ""):
+                        target_class_comparison = values[16].replace("\"","")
+                    else:
+                        target_class_comparison = 0
+                    break
+            if (target_class_comparison == ""):
+                target_class_comparison = "UNAVAILABLE INFORMATION"
 
         return [target_class_comparison, target_method_comparison]
 
@@ -179,6 +221,3 @@ class Result_Summary(Output):
             self.summary.append([project_name, target_class, target_method, merge_commit, target_parent, jar_type, str(conflict_occurrence_first),
                                  str(conflict_tools_first).replace("\'",""), str(conflict_occurrence_second), str(conflict_tools_second).replace("\'",""),
                                  str(behavior_change),str(behavior_change_tools).replace("\'",""),"","","",""])
-            '''self.write_output_line([project_name, merge_commit, target_parent, jar_type, str(conflict_occurrence_first),
-                str(conflict_tools_first).replace("\'",""), str(conflict_occurrence_second), str(conflict_tools_second).replace("\'",""),
-                str(behavior_change),str(behavior_change_tools).replace("\'",""),"","","",""])'''
