@@ -29,7 +29,7 @@ class Report_Writer:
             output_file.write(headers)
 
             for key in data:
-                text = key + "," + self.get_comparsion(int(data.get(key)[0]), int(data.get(key)[1]))
+                text = key.replace(",","|") + "," + self.get_comparsion(int(data.get(key)[0]), int(data.get(key)[1]))
 
                 if is_object_report:
                     text += "," + self.get_comparsion(int(data.get(key)[2]), int(data.get(key)[3])) + "," + self.get_comparsion(float(data.get(key)[4]), float(data.get(key)[5])) + "," + self.get_comparsion(float(data.get(key)[6]), float(data.get(key)[7])) + "\n"

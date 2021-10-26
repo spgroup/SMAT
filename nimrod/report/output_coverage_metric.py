@@ -23,7 +23,7 @@ class Output_coverage_metric(Output):
             self.create_result_file()
         else:
             self.write_each_result(self.formate_output_line(commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
-                                                            listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, classeTarget, nomeMetodoTarget, jar_type))
+                                                            listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, classeTarget.replace(",","|"), nomeMetodoTarget.replace(",","|"), jar_type))
 
     def formate_output_line(self, commitVersion, test_suite_commit, projectName, path_suite_one, path_suite_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
                             listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, classeTarget, nomeMetodoTarget, jar_type=None):
