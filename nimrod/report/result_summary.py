@@ -51,7 +51,8 @@ class Result_Summary(Output):
             self.summary_by_target_method(merge_scenario_values, parent_one, parent_two, "serialized")
 
         for summary_line in self.summary:
-            if (summary_line[3]+"-"+summary_line[4] in self.randoop_suites and summary_line[3]+"-"+summary_line[4] in self.randoop_mod_suites):
+            if (summary_line[3]+"-"+summary_line[4] in self.randoop_suites and summary_line[3]+"-"+summary_line[4] in self.randoop_mod_suites and len(self.randoop_suites[summary_line[3]+"-"+summary_line[4]]) > 0 and len(self.randoop_mod_suites[summary_line[3]+"-"+summary_line[4]]) > 0):
+                print(self.randoop_suites[summary_line[3]+"-"+summary_line[4]])
                 suite_original = self.randoop_suites[summary_line[3]+"-"+summary_line[4]][0]
                 suite_modified = self.randoop_mod_suites[summary_line[3]+"-"+summary_line[4]][0]
                 comparison = self.get_value_metric_object_creation(suite_original, suite_modified, str(summary_line[3]).split(" | ")[0].replace("$","."),
@@ -150,7 +151,7 @@ class Result_Summary(Output):
 
     def get_file_collumn_names(self):
         return ["project_name","merge_scenario","target_class","target_method","target_parent","jar_type","conflict_detection_first_criterion","tools",
-                "conflict_detection_first_criterion","tools","behavior_change","tools","improvement_object_creation",
+                "conflict_detection_second_criterion","tools","behavior_change","tools","improvement_object_creation",
                 "improvement_on_target_method_call","improvement_on_coverage_target_class","improvement_on_coverage_target_method"]
 
     def write_output_line(self, text):
@@ -186,12 +187,12 @@ class Result_Summary(Output):
                             conflict_tools_first.append(value[5])
                     elif (value[7] == "SECOND_CRITERION"):
                         conflict_occurrence_second = True;
-                    if (not value[5] in conflict_tools_second):
-                        conflict_tools_second.append(value[5])
-                    elif (value[7] == "BEHAVIOR-CHANGE-COMMIT-PAIR"):
+                        if (not value[5] in conflict_tools_second):
+                            conflict_tools_second.append(value[5])
+                    elif (value[7] == "BEHAVIOR_CHANGE_COMMIT_PAIR"):
                         behavior_change = True;
-                    if (not value[5] in behavior_change_tools):
-                        behavior_change_tools.append(value[5])
+                        if (not value[5] in behavior_change_tools):
+                            behavior_change_tools.append(value[5])
 
                 if (project_name == ""):
                     project_name = value[0]
