@@ -78,4 +78,5 @@ if __name__ == '__main__':
                     semantic_study_obj.report_analysis.start_analysis(randoop, randoop_modified)
                     coverage_report.generate_report(semantic_study_obj, merge, row[2], randoop, randoop_modified, row[0], row[14])
 
-        semantic_study_obj.results_summary.generate_summary(local_file_result, local_file_coverage);
+        semantic_study_obj = semantic_study()
+        semantic_study_obj.results_summary.generate_summary(semantic_study_obj.output_semantic_conflict.output_file_path, semantic_study_obj.output_coverage_metric.output_file_path);

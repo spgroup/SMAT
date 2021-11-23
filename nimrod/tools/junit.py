@@ -20,7 +20,15 @@ JUnitResult = namedtuple('JUnitResult', ['ok_tests', 'ok_tests_error', 'ok_tests
 
 
 def is_failed_caused_by_compilation_problem(test_case_name, failed_test_message):
-    my_regex = re.escape(test_case_name) + r"[0-9A-Za-z0-9_\(\.\)\n]+(NoSuchMethodError|NoSuchFieldError|NoSuchClassError|NoSuchAttributeError):"
+    my_regex = re.escape(test_case_name) + r"[0-9A-Za-z0-9_\(\.\)\n \:]+(NoSuchMethodError|NoSuchFieldError|NoSuchClassError|NoSuchAttributeError|tried to access method)"
+    matches = re.findall(my_regex, failed_test_message)
+    if (len(matches) > 0):
+        return True
+    else:
+        return False
+
+def is_failed_caused_by_error(test_case_name, failed_test_message):
+    my_regex = re.escape(test_case_name) + r"[0-9A-Za-z0-9_(.)]RegressionTest[0-9A-Za-z0-9_(.)\n]+Exception"
     matches = re.findall(my_regex, failed_test_message)
     if (len(matches) > 0):
         return True
@@ -133,6 +141,10 @@ class JUnit:
                     print("\n*** ERROR: test case "+test_case+" was not executable in project version. \n")
                     tests_not_executed_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
                     tests_not_executed.add(test_case)
+                elif ((is_failed_caused_by_error(test_case, output) == True)):
+                    print("\n*** ERROR: test case "+test_case+" with error \n")
+                    tests_not_executed_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
+                    tests_not_executed.add(test_case)
                 else:
                     print("\n*** Failed: test case " + test_case + ". \n")
                     tests_fail_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
@@ -171,7 +183,8 @@ class JUnit:
         timeout = False
         flaky_test_set = set()
 
-        for i in range(0, 1):
+        for i in range(0, 3):
+            print("Execution : "+str(i+1)+" out of 3")
             for test_class in suite.test_classes:
                 result = self.exec_with_mutant(suite.suite_dir,
                                                suite.suite_classes_dir, sut_class,
