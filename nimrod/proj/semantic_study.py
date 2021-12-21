@@ -6,10 +6,10 @@ from nimrod.proj.project_dependencies import Project_dependecies
 from nimrod.project_info.git_project import GitProject
 from nimrod.project_info.merge_scenario import MergeScenario
 from nimrod.report.output_behavior_change_commit_pair import Output_behavior_change_commit_pair
-#from nimrod.report.output_coverage_metric import Output_coverage_metric
+from nimrod.report.output_coverage_metric import Output_coverage_metric
 from nimrod.report.output_report import Output_report
 from nimrod.report.output_semantic_conflicts import Output_semantic_conflicts
-#from nimrod.report_metrics.coverage.coverage_report import Coverage_Report
+from nimrod.report_metrics.coverage.coverage_report import Coverage_Report
 from nimrod.report.report_analysis import Report_Analysis
 from nimrod.report.result_summary import Result_Summary
 from nimrod.setup_tools.evosuite_diff_setup import Evosuite_Diff_setup
@@ -37,7 +37,7 @@ class semantic_study:
         self.report_analysis = Report_Analysis()
 
         self.output_semantic_conflict = Output_semantic_conflicts(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "test_conflicts")
-        #self.output_coverage_metric = Output_coverage_metric(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "result_cobertura")
+        self.output_coverage_metric = Output_coverage_metric(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "result_cobertura")
 
         self.output_report = Output_report(config["path_output_csv"])
         self.results_summary = Result_Summary(os.getcwd().replace("/nimrod/proj","/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/", "results_summary");
