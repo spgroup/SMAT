@@ -32,7 +32,7 @@ class Randoop(SuiteGenerator):
         return self._exec(*tuple(params))
 
     def _test_classes(self):
-        return ['RegressionTest']
+        return ['RegressionTest', 'ErrorTest']
 
     def generate_with_impact_analysis(self, impact_analysis, method_analysis=False):
         method_list = ""

@@ -11,7 +11,7 @@ class Setup_tool(ABC):
         self.tool_parameters = None
         self.behaviour_change = Behaviour_check()
 
-    def setup_for_partial_merge_scenario(self, evo, scenario, jarBase, jarParent, jarMerge=None):
+    def setup_for_partial_merge_scenario(self, evo, scenario, jarBase, jarParent=None, jarMerge=None):
         try:
             evo.project_dep.baseDir = jarBase
             evo.project_dep.parentReg = jarParent
@@ -144,3 +144,32 @@ class Setup_tool(ABC):
     @abstractmethod
     def generate_test_suite(self, scenario, project_dep):
         pass
+
+    def generate_and_run_test_suites_for_commit(self, evo, scenario, commitOne, conflict_info, tool):
+        path_suite = []
+        test_result_base = set()
+
+        try:
+            path_suite = self.generate_test_suite(scenario, evo.project_dep)
+
+            test_result_base = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+                                                   evo.project_dep.baseDir, evo.project_dep)
+        except:
+            print("Some project versions could not be evaluated")
+            conflict_info.append(["NONE", set(), "NO-INFORMATION", commitOne, "",
+                                  tool])
+
+        return path_suite, test_result_base
+
+    def run_tool_for_commit(self, evo, scenario, jarCommit, commitSha, tool, projectName=None):
+        conflict_info = []
+        try:
+            self.setup_for_partial_merge_scenario(evo, scenario, jarCommit, jarCommit, jarCommit)
+            test_results_left = self.generate_and_run_test_suites_for_commit(evo, scenario, commitSha, conflict_info, tool)
+            if (len(test_results_left[0]) > 0):
+                conflict_info = test_results_left[0][1]
+
+        except:
+            print("Some project versions could not be evaluated")
+
+        return conflict_info

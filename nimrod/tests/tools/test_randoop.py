@@ -49,7 +49,7 @@ class TestRandoop(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(1, len(suite_classes))
+        self.assertEquals(2, len(suite_classes))
 
         # shutil.rmtree(tests_src)
 
@@ -78,7 +78,7 @@ class TestRandoop(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(1, len(suite_classes))
+        self.assertEquals(2, len(suite_classes))
 
         shutil.rmtree(tests_src)
 
