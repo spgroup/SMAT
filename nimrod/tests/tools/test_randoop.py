@@ -35,9 +35,11 @@ class TestRandoop(TestCase):
             java=self.java,
             classpath=os.path.join(calculator_target_dir(), 'classes'),
             tests_src=tests_src,
-            sut_class='br.ufal.ic.easy.operations.Sum'
+            sut_class='br.ufal.ic.easy.operations.Sum',
+            sut_classes=['br.ufal.ic.easy.operations.Sum']
         )
-        randoop.parameters = ['--time-limit=1']
+        randoop.parameters = ['--time-limit=1',
+                              '--testclass=br.ufal.ic.easy.operations.Sum']
 
         (suite_name, suite_dir, suite_classes_dir,
          suite_classes) = randoop.generate()
@@ -47,7 +49,7 @@ class TestRandoop(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(1, len(suite_classes))
+        self.assertEquals(2, len(suite_classes))
 
         # shutil.rmtree(tests_src)
 
@@ -59,9 +61,11 @@ class TestRandoop(TestCase):
             java=self.java,
             classpath=classes_dir,
             tests_src=tests_src,
-            sut_class='br.ufal.ic.easy.operations.Sum'
+            sut_class='br.ufal.ic.easy.operations.Sum',
+            sut_classes=['br.ufal.ic.easy.operations.Sum']
         )
-        randoop.parameters = ['--time-limit=1']
+        randoop.parameters = ['--time-limit=1',
+                              '--testclass=br.ufal.ic.easy.operations.Sum']
 
         safira = Safira(self.java, classes_dir,
                         calculator_src_aor_1())
@@ -74,7 +78,7 @@ class TestRandoop(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(1, len(suite_classes))
+        self.assertEquals(2, len(suite_classes))
 
         shutil.rmtree(tests_src)
 

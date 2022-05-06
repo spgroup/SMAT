@@ -17,3 +17,10 @@ This project aims to detect semantic conflicts by generating and running test su
   <li>Finally, run the script <a href="https://github.com/spgroup/mergedataset/blob/c8b965f71624f0ee3bec197d37ffbb2a9aaba97b/semantic-conflicts/get_sample.py" target="_blank">get_sample.py</a>. </li>
   <li>As a result, the file <b>results_semantic_study.csv</b> will be created. If you want to analyze other merge scenarios, you must provide a file the same information provided in our dataset.</li>
 </ul>
+
+## Attentions When Using Windows
+If you use Windows as your operating system, when you clone this project, you will probably receive an error message due to the size of a few file names. This problem will make it impossible for you to clone this repository.
+
+To resolve this, you must install the Windows Subsystem for Linux (WSL); just follow the steps outlined in this [guide](https://docs.microsoft.com/pt-br/windows/wsl/install-win10). At the end of the installation, just open the Linux terminal on your Windows and clone the project as usual.
+
+To execute the project, we advise you to use VSCode, because it has extensions to integrate with WSL. Once WSL is installed, when opening VSCode, a message will be displayed to download the Remote - WSL extension. With it, it is possible to edit all the files that are in WSL through VSCode and execute the project via terminal.

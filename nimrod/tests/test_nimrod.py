@@ -1,5 +1,6 @@
 import os
 import shutil
+import unittest
 
 from unittest import TestCase
 
@@ -18,6 +19,7 @@ class TestNimrod(TestCase):
         self.java = Java(get_config()['java_home'])
         self.maven = Maven(self.java, get_config()['maven_home'])
 
+    @unittest.skip("old test")
     def test_nimrod(self):
         nimrod = Nimrod(self.java, self.maven)
         results = nimrod.run(calculator_project_dir(), calculator_mutants_dir(),
@@ -45,6 +47,7 @@ class TestNimrod(TestCase):
 
         shutil.rmtree(os.path.join(calculator_project_dir(), 'nimrod_output'))
 
+    @unittest.skip("old test")
     def test_nimrod_with_output_dir(self):
         nimrod = Nimrod(self.java, self.maven)
         output_dir = os.path.join(calculator_project_dir(), 'nimrod_output_2')

@@ -41,7 +41,7 @@ class Java:
 
     @property
     def java(self):
-        return os.path.join(self.java_home, os.sep.join(['jre', 'bin', 'java']))
+        return os.path.join(self.java_home, os.sep.join(['bin', 'java']))
 
     def _version_javac(self):
         return self.simple_exec_javac('-version')
@@ -77,11 +77,17 @@ class Java:
         try:
             command = [program] + list(args)
 
+            print(command)
+
             return subprocess.check_output(command, cwd=cwd, env=env,
                                            timeout=timeout,
                                            stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             print(e)
+            raise e
+        except RuntimeError as e:
+            print(e)
+            RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
             raise e
         except subprocess.TimeoutExpired as e:
             print(e)

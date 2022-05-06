@@ -12,14 +12,23 @@ from nimrod.mutant import Mutant
 TIMEOUT = 3000
 
 
-JUnitResult = namedtuple('JUnitResult', ['ok_tests', 'fail_tests', 
-                                         'fail_test_set', 'fail_test_set_with_files', 'not_executed_test_set',
-                                         'not_executed_test_set_with_files', 'flaky_test_set', 'run_time',
-                                         'coverage', 'timeout'])
+JUnitResult = namedtuple('JUnitResult', ['ok_tests', 'ok_tests_error', 'ok_tests_number', 'fail_tests',
+                                         'fail_test_set', 'fail_test_set_with_files', 'fail_tests_error',
+                                         'fail_test_set_error', 'fail_test_set_with_files_error', 'not_executed_test_set_error',
+                                         'not_executed_test_set_with_files_error', 'not_executed_test_set', 'not_executed_test_set_with_files',
+                                         'flaky_test_set', 'run_time', 'coverage', 'timeout'])
 
 
 def is_failed_caused_by_compilation_problem(test_case_name, failed_test_message):
-    my_regex = re.escape(test_case_name) + r"[0-9A-Za-z0-9_\(\.\)\n]+(NoSuchMethodError|NoSuchFieldError|NoSuchClassError|NoSuchAttributeError):"
+    my_regex = re.escape(test_case_name) + r"[0-9A-Za-z0-9_\(\.\)\n \:]+(NoSuchMethodError|NoSuchFieldError|NoSuchClassError|NoSuchAttributeError|tried to access method)"
+    matches = re.findall(my_regex, failed_test_message)
+    if (len(matches) > 0):
+        return True
+    else:
+        return False
+
+def is_failed_caused_by_error(test_case_name, failed_test_message):
+    my_regex = re.escape(test_case_name) + r"[0-9A-Za-z0-9_(.)]RegressionTest[0-9A-Za-z0-9_(.)\n]+Exception"
     matches = re.findall(my_regex, failed_test_message)
     if (len(matches) > 0):
         return True
@@ -86,7 +95,7 @@ class JUnit:
             elapsed_time = time.time() - start
             print("# [WARNING] Run JUnit tests timed out. {0} seconds".format(
                 elapsed_time))
-            return JUnitResult(0, 0, set(), 0, None, True)
+            return JUnitResult(set(), set(), 0, 0, set(), set(), 0, set(), set(), set(), set(), set(), set(), set(), 0, None, True)
 
     @staticmethod
     def _extract_results_ok(output):
@@ -94,9 +103,9 @@ class JUnit:
         if len(result) > 0:
             result = result[0].replace('(', '')
             r = [int(s) for s in result.split() if s.isdigit()]
-            return set(), 0, set(), set(), set(), set(), set()
+            return set(), set(), r[0], 0, set(), set(), 0, set(), set(), set(), set(), set(), set(), set()
 
-        return 0, 0, set()
+        return set, set(), 0, 0, set(), set(), 0, set(), set(), set(), set(), set(), set(), set()
 
     @staticmethod
     #trabalhar para extrair o conjunto de testes que passaram.
@@ -108,9 +117,9 @@ class JUnit:
                 result = result[0].replace(',', ' ')
                 r = [int(s) for s in result.split() if s.isdigit()]
                 result = JUnit._extract_test_id(output)
-                return result[2], r[1], result[0], result[3], result[1], result[4], set()
+                return result[2], set(), len(result[2]), r[1], result[0], result[3], 0, set(), set(), set(), set(), result[1], result[4], set()
 
-        return 0, 0, set()
+        return set(), set(), 0, 0, set(), set(), 0, set(), set(), set(), set(), set(), set(), set()
 
     @staticmethod
     def _extract_test_id(output):
@@ -132,6 +141,10 @@ class JUnit:
                     print("\n*** ERROR: test case "+test_case+" was not executable in project version. \n")
                     tests_not_executed_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
                     tests_not_executed.add(test_case)
+                elif ((is_failed_caused_by_error(test_case, output) == True)):
+                    print("\n*** ERROR: test case "+test_case+" with error \n")
+                    tests_not_executed_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
+                    tests_not_executed.add(test_case)
                 else:
                     print("\n*** Failed: test case " + test_case + ". \n")
                     tests_fail_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
@@ -150,11 +163,18 @@ class JUnit:
                         original_dir=None):
         executions_test = []
         ok_tests = set()
+        ok_tests_number = 0
         fail_tests = 0
         fail_test_set = set()
         fail_test_set_with_files = set()
         not_executed_test_set = set()
         not_executed_test_set_with_files = set()
+        ok_tests_error = set()
+        fail_tests_error = 0
+        fail_test_set_error = set()
+        fail_test_set_with_files_error = set()
+        not_executed_test_set_error = set()
+        not_executed_test_set_with_files_error = set()
         run_time = 0
         call_points = set()
         test_cases = set()
@@ -163,20 +183,30 @@ class JUnit:
         timeout = False
         flaky_test_set = set()
 
-        for i in range(0, 1):
+        for i in range(0, 3):
+            print("Execution : "+str(i+1)+" out of 3")
             for test_class in suite.test_classes:
                 result = self.exec_with_mutant(suite.suite_dir,
                                                suite.suite_classes_dir, sut_class,
                                                test_class, mutant_dir)
-                ok_tests = result.ok_tests
-                fail_tests += result.fail_tests
-                not_executed_test_set = result.not_executed_test_set
-                not_executed_test_set_with_files = result.not_executed_test_set_with_files
-                fail_test_set = result.fail_test_set
-                fail_test_set_with_files = result.fail_test_set_with_files
+                if (test_class == 'ErrorTest'):
+                    ok_tests_error.update(result.ok_tests_error)
+                    fail_tests_error += result.fail_tests
+                    fail_test_set_error.update(result.fail_test_set)
+                    fail_test_set_with_files_error.update(result.fail_test_set_with_files)
+                    not_executed_test_set_error.update(result.not_executed_test_set)
+                    not_executed_test_set_with_files_error.update(result.not_executed_test_set_with_files)
+                else:
+                    fail_tests += result.fail_tests
+                    fail_test_set.update(result.fail_test_set)
+                    fail_test_set_with_files.update(result.fail_test_set_with_files)
+                    not_executed_test_set.update(result.not_executed_test_set)
+                    not_executed_test_set_with_files.update(result.not_executed_test_set_with_files)
+                    ok_tests.update(result.ok_tests)
+                    ok_tests_number += result.ok_tests_number
                 run_time += run_time
                 timeout = timeout or result.timeout
-                flaky_test_set = result.flaky_test_set
+                flaky_test_set.update(result.flaky_test_set)
 
                 if not timeout:
                     if cov_original:
@@ -204,7 +234,7 @@ class JUnit:
                     if r.timeout:
                         return None
 
-            executions_test.append(JUnitResult(ok_tests, fail_tests, fail_test_set, fail_test_set_with_files, not_executed_test_set,not_executed_test_set_with_files, flaky_test_set, run_time,Coverage(call_points, test_cases, executions,class_coverage),timeout))
+            executions_test.append(JUnitResult(ok_tests, ok_tests_error, ok_tests_number, fail_tests, fail_test_set, fail_test_set_with_files, fail_tests_error, fail_test_set_error, fail_test_set_with_files_error, not_executed_test_set_error,not_executed_test_set_with_files_error, not_executed_test_set,not_executed_test_set_with_files, flaky_test_set, run_time,Coverage(call_points, test_cases, executions,class_coverage),timeout))
 
         return self.check_for_consistent_test_results(executions_test)
 

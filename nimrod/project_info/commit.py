@@ -5,9 +5,9 @@ class Commit:
         self.left_hash = left_hash
         self.right_hash = right_hash
         self.base_hash = base_hash
-        self.sut_class = sut_class
-        self.sut_method = sut_class+"."+changed_method
-        # self.valid_scenario = self.check_validate_scenario(base_hash, left_hash, right_hash)
+        self.sut_classes = sut_class.split(" | ")
+        self.sut_class = self.sut_classes[0]
+        self.sut_method = self.sut_class.replace(" ","")+"."+changed_method.replace("|",",")
 
     def get_merge_hash(self):
         return self.merge_hash
@@ -23,6 +23,9 @@ class Commit:
 
     def get_sut_class(self):
         return self.sut_class
+
+    def get_sut_classes(self):
+        return self.sut_classes
 
     def get_sut_method(self):
         return self.sut_method
