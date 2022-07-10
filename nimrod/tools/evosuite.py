@@ -69,18 +69,23 @@ class Evosuite(SuiteGenerator):
         return ordered_files
 
     def _exec_differential(self, mutants_classpath):
-        params = [
-            '-jar', EVOSUITE,
-            '-regressionSuite',
-            '-projectCP', self.classpath,
-            '-Dregressioncp=' + mutants_classpath,
-            '-class', self.sut_class,
-            '-DOUTPUT_DIR=' + self.suite_dir
-        ]
+        calls = []
 
-        params += self.parameters
+        for sut_class in self.sut_classes:
+            params = [
+                '-jar', EVOSUITE,
+                '-regressionSuite',
+                '-projectCP', self.classpath,
+                '-Dregressioncp=' + mutants_classpath,
+                '-class', sut_class,
+                '-DOUTPUT_DIR=' + self.suite_dir
+            ]
 
-        return self._exec(*tuple(params))
+            params += self.parameters
+
+            calls.append(self._exec(*tuple(params)))
+
+        return calls
 
     def generate_differential(self, mutant_classpath, make_dir=True):
         if make_dir:
