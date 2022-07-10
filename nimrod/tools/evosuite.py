@@ -14,27 +14,31 @@ class Evosuite(SuiteGenerator):
         return "evosuite"
 
     def _exec_tool(self):
-        params = [
-            '-jar', EVOSUITE,
-            '-projectCP', self.classpath,
-            '-class', self.sut_class,
-            '-Dtimeout', '10000',
-            '-Dassertion_strategy=all',
-            '-Dp_reflection_on_private=0',
-            '-Dreflection_start_percent=0',
-            '-Dp_functional_mocking=0',
-            '-Dfunctional_mocking_percent=0',
-            '-Dminimize=false',
-            #'-Dassertions=false',
-            '-Dsearch_budget=300',
-            '-Djunit_check=false',
-            '-Dinline=false',
-            '-DOUTPUT_DIR=' + self.suite_dir
-        ]
+        calls = []
 
-        params += self.parameters
+        for sut_class in self.sut_classes:
+            params = [
+                '-jar', EVOSUITE,
+                '-projectCP', self.classpath,
+                '-class', sut_class,
+                '-Dtimeout', '15',
+                '-Dassertion_strategy=all',
+                '-Dp_reflection_on_private=0',
+                '-Dreflection_start_percent=0',
+                '-Dp_functional_mocking=0',
+                '-Dfunctional_mocking_percent=0',
+                '-Dminimize=false',
+                '-Dsearch_budget=10',
+                '-Djunit_check=false',
+                '-Dinline=false',
+                '-DOUTPUT_DIR=' + self.suite_dir
+            ]
 
-        return self._exec(*tuple(params))
+            params += self.parameters
+
+            calls.append(self._exec(*tuple(params)))
+
+        return calls
 
     def _test_classes(self):
         classes = []
