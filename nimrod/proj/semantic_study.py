@@ -17,7 +17,8 @@ from nimrod.setup_tools.evosuite_setup import Evosuite_setup
 from nimrod.setup_tools.randoop_modified_setup import Randoop_Modified_setup
 from nimrod.setup_tools.randoop_setup import Randoop_setup
 from nimrod.setup_tools.tools import Tools
-from nimrod.tests.utils import get_config
+from nimrod.tests.utils import get_config, setup_logging
+import logging
 
 NimrodResult = namedtuple('NimrodResult', ['maybe_equivalent', 'not_equivalent',
                                            'coverage', 'differential',
@@ -51,16 +52,18 @@ class semantic_study:
     def get_commit_triples(self, row):
         return [[row[10],row[11],row[13],row[5], row[3], row[2]], [row[10],row[12],row[13],row[5], row[4], row[2]]]
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     config = get_config()
+    setup_logging()
+
     with open(config['path_hash_csv']) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         local_file_result = ""
         local_file_coverage = ""
         for row in csv_reader:
             if row[1] == "true":
-                print("Semantic Conflict Analysis")
+                logging.info("Starting Semantic Conflict Analysis for project %s", row[0])
                 semantic_study_obj = semantic_study(project_name=row[0])
                 local_file_result = semantic_study_obj.output_semantic_conflict.output_file_path
                 local_file_coverage = semantic_study_obj.output_coverage_metric.output_file_path
@@ -79,6 +82,8 @@ if __name__ == '__main__':
                 # semantic_study_obj.output_semantic_conflict.write_output_line(row[0], randoop_modified, row[6], row[7], row[14])
                 # semantic_study_obj.report_analysis.start_analysis(randoop, randoop_modified)
                 # coverage_report.generate_report(semantic_study_obj, merge, row[2], randoop, randoop_modified, row[0], row[14])
+            else:
+                logging.info("Ignoring Semantic Conflict Analysis for project %s", row[0])
 
         semantic_study_obj = semantic_study()
         semantic_study_obj.results_summary.generate_summary(semantic_study_obj.output_semantic_conflict.output_file_path, semantic_study_obj.output_coverage_metric.output_file_path);

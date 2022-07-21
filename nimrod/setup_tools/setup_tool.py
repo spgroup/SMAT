@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from ast import Suite
+import logging
 from nimrod.project_info.commit import Commit
 from nimrod.project_info.merge_scenario import MergeScenario
 
@@ -84,8 +85,11 @@ class Setup_tool(ABC):
         test_result_other_parent = set()
         test_result_merge = set()
         try:
+            logging.info("Starting test suite generation with %s tool", tool)
             path_suite = self.generate_test_suite(scenario, evo.project_dep)
+            logging.info("Finished test suite generation with %s tool", tool)
 
+            logging.info("Starting test suite execution for commit %s", scenario.merge_scenario.base_hash)
             test_result_base = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                    evo.project_dep.baseDir, evo.project_dep)
             test_result_parent_test_suite = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
