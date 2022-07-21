@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from ast import Suite
+from nimrod.project_info.commit import Commit
+from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.setup_tools.behaviour_check import Behaviour_check
 from nimrod.tools.junit import JUnit
@@ -73,7 +76,7 @@ class Setup_tool(ABC):
 
         return conflict_info
 
-    def generate_and_run_test_suites(self, evo, scenario, commitBaseSha, commitParentTestSuite, commitOtherParent,
+    def generate_and_run_test_suites(self, evo, scenario: MergeScenario, commitBaseSha, commitParentTestSuite, commitOtherParent,
                                      commitMergeSha, conflict_info, tool):
         path_suite = []
         test_result_base = set()
@@ -83,13 +86,13 @@ class Setup_tool(ABC):
         try:
             path_suite = self.generate_test_suite(scenario, evo.project_dep)
 
-            test_result_base = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_base = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                    evo.project_dep.baseDir, evo.project_dep)
-            test_result_parent_test_suite = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_parent_test_suite = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                                 evo.project_dep.parentReg, evo.project_dep)
-            test_result_other_parent = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_other_parent = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                            evo.project_dep.parentNotReg, evo.project_dep)
-            test_result_merge = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_merge = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                     evo.project_dep.mergeDir, evo.project_dep)
         except Exception as exception:
             print(exception)
@@ -99,7 +102,7 @@ class Setup_tool(ABC):
 
         return path_suite, test_result_base, test_result_parent_test_suite, test_result_other_parent, test_result_merge
 
-    def generate_and_run_test_suites_for_commit_pair(self, evo, scenario, commitOne, commitTestSuite, conflict_info, tool):
+    def generate_and_run_test_suites_for_commit_pair(self, evo, scenario: MergeScenario, commitOne, commitTestSuite, conflict_info, tool):
         path_suite = []
         test_result_base = set()
         test_result_parent_test_suite = set()
@@ -107,9 +110,9 @@ class Setup_tool(ABC):
         try:
             path_suite = self.generate_test_suite(scenario, evo.project_dep)
 
-            test_result_base = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_base = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                    evo.project_dep.baseDir, evo.project_dep)
-            test_result_parent_test_suite = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_parent_test_suite = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                                 evo.project_dep.parentReg, evo.project_dep)
         except:
             print("Some project versions could not be evaluated")
@@ -137,23 +140,25 @@ class Setup_tool(ABC):
         conflict_info.append(self.behaviour_change.check_different_test_results_for_commit_pair(test_result_merge,
                                     test_result_parent_test_suite, path_suite, commitMergeSHa, commitParentTestSuite, tool))
 
-    def run_test_suite(self, classes_dir, sut_class, mutant_dir, project_dep):
+    def run_test_suite(self, classes_dir, target_classes: "dict[str, list[str]]", mutant_dir, project_dep):
         junit = JUnit(java=project_dep.java, classpath=classes_dir)
-        res = junit.run_with_mutant(self.test_suite, sut_class, mutant_dir)
+        # For now, only collect coverage for the first class passed in
+        target_class = list(target_classes.keys())[0]
+        res = junit.run_with_mutant(self.test_suite, target_class, mutant_dir)
         return res
 
     @abstractmethod
-    def generate_test_suite(self, scenario, project_dep):
+    def generate_test_suite(self, scenario: MergeScenario, project_dep):
         pass
 
-    def generate_and_run_test_suites_for_commit(self, evo, scenario, commitOne, conflict_info, tool):
+    def generate_and_run_test_suites_for_commit(self, evo, scenario: MergeScenario, commitOne, conflict_info, tool):
         path_suite = []
         test_result_base = set()
 
         try:
             path_suite = self.generate_test_suite(scenario, evo.project_dep)
 
-            test_result_base = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
+            test_result_base = self.run_test_suite(evo.project_dep.parentReg, scenario.merge_scenario.targets,
                                                    evo.project_dep.baseDir, evo.project_dep)
         except:
             print("Some project versions could not be evaluated")
@@ -162,7 +167,7 @@ class Setup_tool(ABC):
 
         return path_suite, test_result_base
 
-    def run_tool_for_commit(self, evo, scenario, jarCommit, commitSha, tool, projectName=None):
+    def run_tool_for_commit(self, evo, scenario: MergeScenario, jarCommit, commitSha, tool, projectName=None):
         conflict_info = []
         try:
             self.setup_for_partial_merge_scenario(evo, scenario, jarCommit, jarCommit, jarCommit)
