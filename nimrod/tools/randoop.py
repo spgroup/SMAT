@@ -53,7 +53,7 @@ class Randoop(SuiteGenerator):
         filename = os.path.join(self.suite_dir, filename)
 
         with open(filename, 'w') as f:
-            fqcns = self.scenario.merge_scenario.targets.keys()
+            fqcns = self.input.targets.keys()
             [f.write(fqcn.replace(" ", "") + "\n") for fqcn in fqcns]
             f.close()
 
@@ -63,7 +63,7 @@ class Randoop(SuiteGenerator):
         filename = os.path.join(self.suite_dir, filename)
 
         with open(filename, 'w') as f:
-            for fqcn, methods in self.scenario.merge_scenario.targets.items():
+            for fqcn, methods in self.input.targets.items():
                 for method in methods:
                     method_signature = fqcn + "." + method
                     f.write(method_signature)

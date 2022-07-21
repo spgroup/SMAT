@@ -12,7 +12,7 @@ class Evosuite(SuiteGenerator):
         return "evosuite"
 
     def _exec_tool(self):
-        for class_name, methods in self.scenario.merge_scenario.targets.items():
+        for class_name, methods in self.input.targets.items():
             params = [
                 '-jar', EVOSUITE,
                 '-projectCP', self.classpath,

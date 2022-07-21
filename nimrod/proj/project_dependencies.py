@@ -27,7 +27,7 @@ class Project_dependecies:
         #self.tests_dst = self.config["tests_dst"]
         self.project = GitProject(path_local_project, path_local_module_analysis, project_name)
         self.projects_folder = self.config["projects_folder"]
-        self.path_hash_csv = self.config["path_hash_csv"]
+        # self.path_hash_csv = self.config["path_hash_csv"]
         self.path_output_csv = self.config["path_output_csv"]
 
     def create_directory_test_destination(self):
