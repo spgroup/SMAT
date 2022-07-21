@@ -71,8 +71,10 @@ if __name__ == '__main__':
                 semantic_study_obj.output_semantic_conflict.write_output_line(row[0], evosuite, row[6], row[7], row[14])
                 # evosuite_diff = semantic_study_obj.evosuite_diff_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.DIFF_EVOSUITE.value)
                 # semantic_study_obj.output_semantic_conflict.write_output_line(row[0], evosuite_diff, row[6], row[7], row[14])
-                # randoop = semantic_study_obj.randoop_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.RANDOOP.value)
-                # semantic_study_obj.output_semantic_conflict.write_output_line(row[0], randoop, row[6], row[7], row[14])
+                randoop = semantic_study_obj.randoop_setup.run_tool_for_semantic_conflict_detection(
+                    semantic_study_obj, merge, row[9], row[10], row[11], row[12], row[5], row[3], row[4], row[2], Tools.RANDOOP.value)
+                semantic_study_obj.output_semantic_conflict.write_output_line(
+                    row[0], randoop, row[6], row[7], row[14])
                 # randoop_modified = semantic_study_obj.randoop_modified_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.RANDOOP_MOD.value)
                 # semantic_study_obj.output_semantic_conflict.write_output_line(row[0], randoop_modified, row[6], row[7], row[14])
                 # semantic_study_obj.report_analysis.start_analysis(randoop, randoop_modified)
