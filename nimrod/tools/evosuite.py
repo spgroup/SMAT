@@ -6,35 +6,36 @@ from nimrod.utils import get_class_files, get_java_files
 from nimrod.tools.bin import EVOSUITE, EVOSUITE_RUNTIME
 from nimrod.tools.suite_generator import Suite
 
-METHOD_LIST_FILENAME = 'methods_to_test.txt'
 
 class Evosuite(SuiteGenerator):
-
     def _get_tool_name(self):
         return "evosuite"
 
     def _exec_tool(self):
-        params = [
-            '-jar', EVOSUITE,
-            '-projectCP', self.classpath,
-            '-class', self.sut_class,
-            '-Dtimeout', '10000',
-            '-Dassertion_strategy=all',
-            '-Dp_reflection_on_private=0',
-            '-Dreflection_start_percent=0',
-            '-Dp_functional_mocking=0',
-            '-Dfunctional_mocking_percent=0',
-            '-Dminimize=false',
-            #'-Dassertions=false',
-            '-Dsearch_budget=300',
-            '-Djunit_check=false',
-            '-Dinline=false',
-            '-DOUTPUT_DIR=' + self.suite_dir
-        ]
+        for class_name, methods in self.scenario.merge_scenario.targets.items():
+            params = [
+                '-jar', EVOSUITE,
+                '-projectCP', self.classpath,
+                '-class', class_name,
+                '-Dtimeout', '10000',
+                '-Dassertion_strategy=all',
+                '-Dp_reflection_on_private=0',
+                '-Dreflection_start_percent=0',
+                '-Dp_functional_mocking=0',
+                '-Dfunctional_mocking_percent=0',
+                '-Dminimize=false',
+                '-Dsearch_budget=30',
+                '-Djunit_check=false',
+                '-Dinline=false',
+                '-DOUTPUT_DIR=' + self.suite_dir,
+            ]
 
-        params += self.parameters
+            if len(methods) > 0:
+                params.append('-Dtarget_method_list="' +
+                           self.create_method_list(methods) + '"')
 
-        return self._exec(*tuple(params))
+            params += self.parameters
+            self._exec(*tuple(params))
 
     def _test_classes(self):
         classes = []
@@ -88,20 +89,6 @@ class Evosuite(SuiteGenerator):
                      suite_classes_dir=self.suite_classes_dir,
                      test_classes=self._test_classes())
 
-    # Argument for using only specific methods to test
-    # Eg.: -Dtarget_method_list="append(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"
-    def generate_with_impact_analysis(self, impact_analysis, method_analysis):
-        self._make_src_dir()
-        impact_analysis_result = impact_analysis.run()
-        if (method_analysis):
-            self.parameters.append('-Dtarget_method=\"' + self.create_method_list_for_single_method(self.get_format_evosuite_method_name()) + '\"')
-        else:
-            method_list = self.create_method_list(impact_analysis_result)
-            if method_list.strip() != '':
-                self.parameters.append('-Dtarget_method_list=\"' + method_list + '\"')
-
-        return super().generate(make_dir=False)
-
     def get_format_evosuite_method_name(self):
         method_name = ""
         try:
@@ -114,38 +101,26 @@ class Evosuite(SuiteGenerator):
 
         return method_name
 
-    def create_method_list(self, impact_analysis_result):
-        method_list = '' 
-        for meth in impact_analysis_result.methods:
-            if self.sut_class in meth:
-                meth_temp = meth.replace(self.sut_class, "")[1:]
-                all_methods = impact_analysis_result.all_methods_by_class[self.sut_class]
-                method_with_return = [m for m in all_methods if meth_temp in m]
-                if len(method_with_return) == 1:
-                    m = method_with_return[0]                
-                    ret = m[0:m.index(meth_temp)].strip()
-                    ret = ret[ret.index(" "):].strip() 
-                    meth_name = meth_temp[meth_temp.find(".")+1:meth_temp.rfind("(")]
-                    meth_args = meth_temp[meth_temp.find("(")+1:meth_temp.rfind(")")].split("|")
-                    asm_meth_format = self.asm_based_method_method_descriptor(meth_args, ret)
-                    method_list = method_list + "{0}{1}".format(meth_name, asm_meth_format) + ":"
-                    
-        return method_list[:-1]
+    def create_method_list(self, methods: "list[str]"):
+        rectified_methods = [self.convert_method_signature(
+            method) for method in methods]
+        return (":").join(rectified_methods)
 
-    def create_method_list_for_single_method(self, method_name):
+    def convert_method_signature(self, meth_signature: str) -> str:
         method_return = ""
         try:
-            method_return = method_name.split(")")[1]
+            method_return = meth_signature.split(")")[1]
         except Exception as e:
             print(e)
-        meth_name = method_name[method_name.find(".") + 1:method_name.rfind("(")]
-        meth_args = method_name[method_name.find("(") + 1:method_name.rfind(")")].split(",")
-        asm_meth_format = self.asm_based_method_method_descriptor(meth_args, method_return)
-        method_list = meth_name+asm_meth_format+":"
+        meth_name = meth_signature[:meth_signature.rfind("(")]
+        meth_args = meth_signature[meth_signature.find(
+            "(") + 1:meth_signature.rfind(")")].split(",")
+        asm_meth_format = self.asm_based_method_method_descriptor(
+            meth_args, method_return)
 
-        return method_list[:-1]
+        return meth_name+asm_meth_format
 
-    #See at: https://asm.ow2.io/asm4-guide.pdf -- Section 2.1.3 and 2.1.4
+    # See at: https://asm.ow2.io/asm4-guide.pdf -- Section 2.1.3 and 2.1.4
     # Java type Type descriptor
     # boolean Z
     # char C
@@ -158,18 +133,18 @@ class Evosuite(SuiteGenerator):
     # Object Ljava/lang/Object;
     # int[] [I
     # Object[][] [[Ljava/lang/Object;
-    def asm_based_method_method_descriptor(self, args, ret):
+    def asm_based_method_method_descriptor(self, method_arguments, method_return):
         result = '('
-        for arg in args:
+        for arg in method_arguments:
             arg = arg.strip()
             result = result + self._asm_based_type_descriptor(arg)
         result = result + ')'
-        result = result + self._asm_based_type_descriptor(ret)
+        result = result + self._asm_based_type_descriptor(method_return)
         return result
 
     def _asm_based_type_descriptor(self, arg):
         result = ''
-        if '[]' in arg:    
+        if '[]' in arg:
             result = result + '['
             arg = arg.replace('[]', '')
 
@@ -199,4 +174,4 @@ class Evosuite(SuiteGenerator):
             temp = "L" + arg.replace('.', '/') + ';'
             result = result + temp
 
-        return result            
+        return result

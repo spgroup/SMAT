@@ -8,6 +8,18 @@ class Commit:
         self.sut_classes = sut_class.split(" | ")
         self.sut_class = self.sut_classes[0]
         self.sut_method = self.sut_class.replace(" ","")+"."+changed_method.replace("|",",")
+        self.targets: dict[str, list[str]] = self.resolve_targets(sut_class)
+
+    def resolve_targets(self, encoded_targets: str):
+        targets = dict()
+        tuples = encoded_targets.split('$')
+
+        for tuple in tuples:
+            [fqcn, methods] = tuple.split('=')
+            methods_list = methods.split(':') if methods != "" else []
+            targets[fqcn] = [x.replace('|', ':') for x in methods_list]
+
+        return targets
 
     def get_merge_hash(self):
         return self.merge_hash

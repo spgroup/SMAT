@@ -91,7 +91,8 @@ class Setup_tool(ABC):
                                                            evo.project_dep.parentNotReg, evo.project_dep)
             test_result_merge = self.run_test_suite(evo.project_dep.parentReg, evo.project_dep.sut_class,
                                                     evo.project_dep.mergeDir, evo.project_dep)
-        except:
+        except Exception as exception:
+            print(exception)
             print("Some project versions could not be evaluated")
             conflict_info.append(["NONE", set(), "NO-INFORMATION", commitBaseSha, commitParentTestSuite, commitMergeSha,
                                     tool])
