@@ -17,14 +17,14 @@ class Evosuite(SuiteGenerator):
                 '-jar', EVOSUITE,
                 '-projectCP', self.classpath,
                 '-class', class_name,
-                '-Dtimeout', '10000',
+                '-Dtimeout', '1000',
                 '-Dassertion_strategy=all',
                 '-Dp_reflection_on_private=0',
                 '-Dreflection_start_percent=0',
                 '-Dp_functional_mocking=0',
                 '-Dfunctional_mocking_percent=0',
                 '-Dminimize=false',
-                '-Dsearch_budget=30',
+                '-Dsearch_budget=300',
                 '-Djunit_check=false',
                 '-Dinline=false',
                 '-DOUTPUT_DIR=' + self.suite_dir,
@@ -66,18 +66,23 @@ class Evosuite(SuiteGenerator):
         return ordered_files
 
     def _exec_differential(self, mutants_classpath):
-        params = [
-            '-jar', EVOSUITE,
-            '-regressionSuite',
-            '-projectCP', self.classpath,
-            '-Dregressioncp=' + mutants_classpath,
-            '-class', self.sut_class,
-            '-DOUTPUT_DIR=' + self.suite_dir
-        ]
+        for class_name, methods in self.input.targets.items():
+            params = [
+                '-jar', EVOSUITE,
+                '-regressionSuite',
+                '-projectCP', self.classpath,
+                '-Dregressioncp=' + mutants_classpath,
+                '-class', class_name,
+                '-DOUTPUT_DIR=' + self.suite_dir,
+                '-Dsearch_budget=300',
+            ]
 
-        params += self.parameters
+            if len(methods) > 0:
+                params.append('-Dtarget_method_list="' +
+                              self.create_method_list(methods) + '"')
 
-        return self._exec(*tuple(params))
+            params += self.parameters
+            self._exec(*tuple(params))
 
     def generate_differential(self, mutant_classpath, make_dir=True):
         if make_dir:

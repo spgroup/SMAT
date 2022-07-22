@@ -80,8 +80,10 @@ if __name__ == '__main__':
             semantic_study_obj, merge, Tools.EVOSUITE.value, scenario)
         semantic_study_obj.output_semantic_conflict.write_output_line(
             scenario.project_name, evosuite, (' | ').join(scenario.targets.keys()), '', scenario.jar_type)
-        # evosuite_diff = semantic_study_obj.evosuite_diff_setup.run_tool_for_semantic_conflict_detection(semantic_study_obj, merge, row[10], row[11], row[12], row[13], row[5], row[3], row[4], row[2], Tools.DIFF_EVOSUITE.value)
-        # semantic_study_obj.output_semantic_conflict.write_output_line(row[0], evosuite_diff, row[6], row[7], row[14])
+        evosuite_diff = semantic_study_obj.evosuite_diff_setup.run_tool_for_semantic_conflict_detection(
+            semantic_study_obj, merge, Tools.DIFF_EVOSUITE.value, scenario)
+        semantic_study_obj.output_semantic_conflict.write_output_line(
+            scenario.project_name, evosuite_diff, (' | ').join(scenario.targets.keys()), '', scenario.jar_type)
         randoop = semantic_study_obj.randoop_setup.run_tool_for_semantic_conflict_detection(
             semantic_study_obj, merge, Tools.RANDOOP.value, scenario)
         semantic_study_obj.output_semantic_conflict.write_output_line(
@@ -93,7 +95,7 @@ if __name__ == '__main__':
         semantic_study_obj.report_analysis.start_analysis(
             randoop, randoop_modified)
         coverage_report.generate_report(semantic_study_obj, merge, scenario.scenario_commits.base,
-                                        randoop, randoop_modified, scenario.project_name, scenario.jar_type)
+                                        randoop, randoop_modified, scenario.project_name, scenario.jar_type, scenario)
 
         semantic_study_obj = semantic_study()
         semantic_study_obj.results_summary.generate_summary(
