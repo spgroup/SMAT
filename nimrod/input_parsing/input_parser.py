@@ -29,14 +29,14 @@ class JsonInputParser(InputParser):
                 base=scenario_commits_json.get('base'),
                 left=scenario_commits_json.get('left'),
                 right=scenario_commits_json.get('right'),
-                ancestor=scenario_commits_json.get('ancestor'),
+                merge=scenario_commits_json.get('merge'),
             ),
             targets=scenario.get('targets'),
             scenario_jars=ScenarioInformation(
                 base=scenario_jars_json.get('base'),
                 left=scenario_jars_json.get('left'),
                 right=scenario_jars_json.get('right'),
-                ancestor=scenario_jars_json.get('ancestor'),
+                merge=scenario_jars_json.get('merge'),
             ),
             jar_type=scenario.get('jarType')
         )
@@ -56,14 +56,14 @@ class CsvInputParser(InputParser):
                 base=row[2],
                 left=row[3],
                 right=row[4],
-                ancestor=row[5],
+                merge=row[5],
             ),
             targets=self._build_targets_from_old_entry(row[6], row[7]),
             scenario_jars=ScenarioInformation(
                 base=row[10],
                 left=row[11],
                 right=row[12],
-                ancestor=row[13],
+                merge=row[13],
             ),
             jar_type=row[14]
         )

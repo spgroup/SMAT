@@ -40,12 +40,12 @@ class Setup_tool(ABC):
         jarBase = input.scenario_jars.base
         jarParentLeft = input.scenario_jars.left
         jarParentRight = input.scenario_jars.right
-        jarMerge = input.scenario_jars.ancestor
+        jarMerge = input.scenario_jars.merge
 
         commitBaseSha = input.scenario_commits.base
         commitParentLeft = input.scenario_commits.left
         commitParentRight = input.scenario_commits.right
-        commitMergeSha = input.scenario_commits.ancestor
+        commitMergeSha = input.scenario_commits.merge
 
         try:
             self.setup_for_full_merge_scenario(evo, scenario, jarBase, jarParentLeft, jarParentRight, jarMerge)

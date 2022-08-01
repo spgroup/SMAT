@@ -17,14 +17,14 @@ class Evosuite(SuiteGenerator):
                 '-jar', EVOSUITE,
                 '-projectCP', self.classpath,
                 '-class', class_name,
-                '-Dtimeout', '1000',
+                '-Dtimeout', '40',
                 '-Dassertion_strategy=all',
                 '-Dp_reflection_on_private=0',
                 '-Dreflection_start_percent=0',
                 '-Dp_functional_mocking=0',
                 '-Dfunctional_mocking_percent=0',
                 '-Dminimize=false',
-                '-Dsearch_budget=300',
+                '-Dsearch_budget=10',
                 '-Djunit_check=false',
                 '-Dinline=false',
                 '-DOUTPUT_DIR=' + self.suite_dir,
@@ -74,7 +74,7 @@ class Evosuite(SuiteGenerator):
                 '-Dregressioncp=' + mutants_classpath,
                 '-class', class_name,
                 '-DOUTPUT_DIR=' + self.suite_dir,
-                '-Dsearch_budget=300',
+                '-Dsearch_budget=10',
             ]
 
             if len(methods) > 0:

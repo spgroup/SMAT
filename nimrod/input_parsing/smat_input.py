@@ -9,8 +9,8 @@ class SmatInput:
 
 
 class ScenarioInformation:
-    def __init__(self, base: str, left: str, right: str, ancestor: str):
+    def __init__(self, base: str, left: str, right: str, merge: str):
         self.base = base
         self.left = left
         self.right = right
-        self.ancestor = ancestor
+        self.merge = merge
