@@ -4,8 +4,8 @@
 
   "repo_dir": "",
   "projects_folder": "",
-  "path_hash_csv" : "",
+  "input_path": "",
   "tests_dst": "",
-  "path_output_csv": ""
-
+  "path_output_csv": "",
+  "logger_level": "DEBUG"
 }
