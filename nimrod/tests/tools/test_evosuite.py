@@ -2,6 +2,8 @@ from unittest import TestCase
 
 import os
 import shutil
+from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.tests.utils import get_config
 from nimrod.tests.utils import calculator_project_dir
@@ -35,7 +37,8 @@ class TestEvosuite(TestCase):
             classpath=os.path.join(calculator_target_dir(), 'classes'),
             tests_src=tests_src,
             sut_class='br.ufal.ic.easy.operations.Sum',
-            params=['-Dsearch_budget=1']
+            params=['-Dsearch_budget=1'],
+            input=SmatInput(targets={'br.ufal.ic.easy.operations.Sum': []})
         )
 
         (suite_name, suite_dir, suite_classes_dir,
@@ -59,7 +62,8 @@ class TestEvosuite(TestCase):
             classpath=os.path.join(calculator_target_dir(), 'classes'),
             tests_src=tests_src,
             sut_class='br.ufal.ic.easy.operations.Sum',
-            params=['-Dsearch_budget=1']
+            params=['-Dsearch_budget=1'],
+            input=SmatInput(targets={'br.ufal.ic.easy.operations.Sum': []})
         )
 
         mutants = MuJava(java=self.java,
