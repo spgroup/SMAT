@@ -69,6 +69,8 @@ class Coverage_Report(Setup_tool):
         except Exception as e:
             print(e)
 
+    # Currently, this method takes the first target (First method of the first class) and returns it as tuple containing the method name, class name and the package of the class.
+    # Future versions of SMAT will involve producing coverage reports for all the targets provided in the input.
     def _decomposeTarget(self, targets: "dict[str,list[str]]"):
         fqcn = list(targets.keys())[0]
         class_name = fqcn[fqcn.rfind('.') + 1:]
