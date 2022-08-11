@@ -18,6 +18,36 @@ This project aims to detect semantic conflicts by generating and running test su
   <li>As a result, the file <b>results_semantic_study.csv</b> will be created. If you want to analyze other merge scenarios, you must provide a file the same information provided in our dataset.</li>
 </ul>
 
+## Providing input
+SMAT allows the user to provide many scenarios for analysis using a JSON file. This JSON file consists of an array including each scenario that's going to be evaluated. The JSON file has the following structure:
+```json
+[
+  {
+    "projectName": "spring-boot",
+    "runAnalysis": true,
+    "scenarioCommits": {
+      "base": "7578f2f824aac027529878810b76ee176b39e73a",
+      "left": "0d00039ae7d01538de3f813b17d125dc5fdd5706",
+      "right": "1c21f54bf91283d70e04c49ea09a4c05a885d7ac",
+      "merge": "3eebbe1c8aed529e6903e78476492592ce0b0049"
+    },
+    "targets": {
+      "org.springframework.boot.context.embedded.undertow.UndertowEmbeddedServletContainerFactory": [
+        "createDeploymentManager(org.springframework.boot.context.embedded.ServletContextInitializer[])"
+      ]
+    },
+    "scenarioJars": {
+      "base": "/home/jpedroh/Projetos/cin/testes-smat/spring-boot/7578f2f824aac027529878810b76ee176b39e73a-createDeploymentManager.jar",
+      "left": "/home/jpedroh/Projetos/cin/testes-smat/spring-boot/0d00039ae7d01538de3f813b17d125dc5fdd5706-createDeploymentManager.jar",
+      "right": "/home/jpedroh/Projetos/cin/testes-smat/spring-boot/1c21f54bf91283d70e04c49ea09a4c05a885d7ac-createDeploymentManager.jar",
+      "merge": "/home/jpedroh/Projetos/cin/testes-smat/spring-boot/3eebbe1c8aed529e6903e78476492592ce0b0049-createDeploymentManager.jar"
+    },
+    "jarType": "transformation"
+  }
+]
+```
+The scenarios file path can then be informed in the `env-config.json` file using the `input_path` field.
+
 ## Attentions When Using Windows
 If you use Windows as your operating system, when you clone this project, you will probably receive an error message due to the size of a few file names. This problem will make it impossible for you to clone this repository.
 
