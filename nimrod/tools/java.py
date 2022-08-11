@@ -94,7 +94,7 @@ class Java:
             logging.error(e)
             raise e
         except FileNotFoundError as e:
-            logging.error('[ERROR] {0}: not found.'.format(program), file=sys.stderr)
+            logging.error('[ERROR] {0}: not found.'.format(program))
             raise e
 
     def get_env(self, variables=None):
