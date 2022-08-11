@@ -25,7 +25,7 @@ Suite = namedtuple('Suite', ['suite_name', 'suite_dir', 'suite_classes_dir',
 
 class SuiteGenerator(ABC):
 
-    def __init__(self, java, classpath, tests_src, sut_class, sut_classes=None, sut_method=None, params=None, scenario: MergeScenario = None, input: SmatInput = None):
+    def __init__(self, java, classpath, tests_src, sut_class=None, sut_classes=None, sut_method=None, params=None, scenario: MergeScenario = None, input: SmatInput = None):
         self.java = java
         self.tests_src = tests_src
         self.classpath = classpath
