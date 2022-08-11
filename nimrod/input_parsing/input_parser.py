@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 
 from nimrod.input_parsing.smat_input import ScenarioInformation, SmatInput
 
-
+# This interface is responsible for parsing user input from a file into SMAT internal model.
+# If you wish to implement a new parser, just create a new implementation of it.
 class InputParser(ABC):
     @abstractmethod
     def parse_input(self, file_path: str) -> "list[SmatInput]":
