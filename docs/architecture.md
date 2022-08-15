@@ -1,4 +1,8 @@
-# Architecture overview
+# Architecture
+
+This documentation dive into details of SMAT architecture.
+
+## Overview
 
 Currently, this is an overview of SMAT architecture.
 
