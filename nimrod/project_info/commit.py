@@ -1,13 +1,13 @@
 class Commit:
 
-    def __init__(self, base_hash, left_hash, right_hash, merge_hash, sut_class, changed_method=""):
+    def __init__(self, base_hash="", left_hash="", right_hash="", merge_hash="", sut_class="", changed_method=""):
         self.merge_hash = merge_hash
         self.left_hash = left_hash
         self.right_hash = right_hash
         self.base_hash = base_hash
         self.sut_classes = sut_class.split(" | ")
         self.sut_class = self.sut_classes[0]
-        self.sut_method = self.sut_class.replace(" ","")+"."+changed_method.replace("|",",")
+        self.sut_method = self.sut_class.replace(" ", "")+"."+changed_method.replace("|", ",")
 
     def get_merge_hash(self):
         return self.merge_hash

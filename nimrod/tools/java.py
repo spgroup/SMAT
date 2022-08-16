@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import subprocess
@@ -77,23 +78,23 @@ class Java:
         try:
             command = [program] + list(args)
 
-            print(command)
+            logging.debug(command)
 
             return subprocess.check_output(command, cwd=cwd, env=env,
                                            timeout=timeout,
                                            stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            print(e)
+            logging.error(e)
             raise e
         except RuntimeError as e:
-            print(e)
+            logging.error(e)
             RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
             raise e
         except subprocess.TimeoutExpired as e:
-            print(e)
+            logging.error(e)
             raise e
         except FileNotFoundError as e:
-            print('[ERROR] {0}: not found.'.format(program), file=sys.stderr)
+            logging.error('[ERROR] {0}: not found.'.format(program))
             raise e
 
     def get_env(self, variables=None):

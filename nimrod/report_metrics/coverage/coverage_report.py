@@ -1,7 +1,9 @@
 import codecs
 import os
+from struct import pack
 
 from bs4 import BeautifulSoup
+from nimrod.input_parsing.smat_input import SmatInput
 
 from nimrod.setup_tools.setup_tool import Setup_tool
 from nimrod.tools.bin import JACOCOAGENT
@@ -10,12 +12,10 @@ from nimrod.tools.suite_generator import Suite
 
 
 class Coverage_Report(Setup_tool):
-    # scenario.merge_scenario.sut_class
-
-    def generate_report(self, evo, scenario, commitMerge, toolOneSuites, toolTwoSuites, projectName, jar_type=None):
-        listaPacoteMetodoClasse = self.recuperaClassePacoteMetodo(scenario.merge_scenario.sut_method.replace("|", ","), scenario.merge_scenario.sut_class)
-
-        listaPartesBasicasReport = ["target_commit", "test_suite_commit", "projeto"]
+    def generate_report(self, evo, scenario, commitMerge, toolOneSuites, toolTwoSuites, projectName, jar_type=None, input: SmatInput = None):
+        listaPacoteMetodoClasse = self._decomposeTarget(input.targets)
+        listaPartesBasicasReport = [
+            "target_commit", "test_suite_commit", "projeto"]
         listaCoberturaProjeto = ["randoop X: cobertura metodo SUA", "randoop Y: cobertura metodo SUA",
                                  "randoop X: cobertura classe SUA", "randoop Y: cobertura classe SUA",
                                  "randoop X: cobertura linha SUA", "randoop Y: cobertura linha SUA"]
@@ -25,12 +25,12 @@ class Coverage_Report(Setup_tool):
                                 "randoop X: cobertura instruction MUA", "randoop Y: cobertura instruction MUA",
                                 "randoop X: cobertura branch MUA", "randoop Y: cobertura branch MUA"]
 
-
         jacoco = Jacoco(java=evo.project_dep.java)
 
         try:
             for i in range(2):
-                test_suite_tool_one = self.get_valid_test_suite(toolOneSuites, i*4, i*4+3)
+                test_suite_tool_one = self.get_valid_test_suite(
+                    toolOneSuites, i*4, i*4+3)
                 #dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, toolOneSuites[0][2], toolOneSuites[0][7], jacoco,
                 if (test_suite_tool_one != None):
                     #self.test_suite = self.get_new_suite(test_suite_tool_one[2], test_suite_tool_one[7])
@@ -42,9 +42,10 @@ class Coverage_Report(Setup_tool):
                         test_suite_commit = commitMerge
 
                     dadosParaGravacaoRandoopX = self.retornaDadosParaAnalise(evo, test_suite_path_one, test_suite_commit, jacoco,
-                                                                             scenario.merge_scenario.sut_class,
-                                                                             listaPacoteMetodoClasse)
-                    test_suite_tool_two = self.get_valid_test_suite(toolTwoSuites, i*4, i*4+3)
+                                                                             list(input.targets.keys())[0],
+                                                                             listaPacoteMetodoClasse, input.targets)
+                    test_suite_tool_two = self.get_valid_test_suite(
+                        toolTwoSuites, i*4, i*4+3)
                     if (test_suite_tool_two != None):
 
                         if (isinstance(test_suite_tool_two, list)):
@@ -56,30 +57,43 @@ class Coverage_Report(Setup_tool):
 
                         #self.test_suite = self.get_new_suite(test_suite_tool_two[2], test_suite_tool_two[7])
                         dadosParaGravacaoRandoopY = self.retornaDadosParaAnalise(evo, test_suite_path_two, test_suite_commit, jacoco,
-                                                                                 scenario.merge_scenario.sut_class,
-                                                                                 listaPacoteMetodoClasse)
+                                                                                 list(input.targets.keys())[0],
+                                                                                 listaPacoteMetodoClasse, input.targets)
 
                         evo.output_coverage_metric.write_output_line(commitMerge, test_suite_commit, projectName, test_suite_path_one, test_suite_path_two, dadosParaGravacaoRandoopX, dadosParaGravacaoRandoopY, listaPartesBasicasReport,
-                                              listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, scenario.merge_scenario.sut_class,
-                                              listaPacoteMetodoClasse[0], jar_type)
+                                                                     listaCoberturaProjeto, listaCoberturaClasse, listaCoberturaMetodo, list(input.targets.keys())[0],
+                                                                     listaPacoteMetodoClasse[0], jar_type)
 
                 if (isinstance(toolOneSuites, list) == False):
-                    break;
+                    break
         except Exception as e:
             print(e)
+
+    # Currently, this method takes the first target (First method of the first class) and returns it as tuple containing the method name, class name and the package of the class.
+    # Future versions of SMAT will involve producing coverage reports for all the targets provided in the input.
+    def _decomposeTarget(self, targets: "dict[str,list[str]]"):
+        fqcn = list(targets.keys())[0]
+        class_name = fqcn[fqcn.rfind('.') + 1:]
+
+        full_method_signature: str = targets[fqcn][0]
+        method_name = full_method_signature[:full_method_signature.rfind('(')]
+
+        package = fqcn[:fqcn.rfind('.')]
+
+        return method_name, class_name, package
 
     def get_valid_test_suite(self, toolSuites, first_entry, last_entry):
         if(isinstance(toolSuites, list) == False):
             if (os.path.isdir(toolSuites+"/classes")):
                 return toolSuites
         else:
-            for i in range (first_entry, last_entry):
+            for i in range(first_entry, last_entry):
                 if (len(toolSuites) > first_entry and toolSuites[i] != None and toolSuites[i][2] != None and os.path.isdir(toolSuites[i][2]+"/classes")):
                     return toolSuites[i]
 
         return None
 
-    def retornaDadosParaAnalise(self, evo, path_suite, suite_merge, jacoco, classeTarget, listaPacoteMetodoClasse):
+    def retornaDadosParaAnalise(self, evo, path_suite, suite_merge, jacoco, classeTarget, listaPacoteMetodoClasse, targets: "dict[str, list[str]]"):
         global tagAClasseTarget
         global tagSpanMetodoTarget
 
@@ -89,9 +103,11 @@ class Coverage_Report(Setup_tool):
             ":")  # Melhoria poderia ser feita removendo caractere do final da lista caso ele exista.
         listaJarInstrumentados = ""
 
-        for j in range(len(listaJar) - 1):  # -1 pois existe um ultimo : ao final do evo.project_dep.classes_dir
+        # -1 pois existe um ultimo : ao final do evo.project_dep.classes_dir
+        for j in range(len(listaJar) - 1):
             jacoco.execInstrumentJar(listaJar[j], path_suite)
-            nomeJarInstrumentado = listaJar[j].split("/")  # recupera o nome do jar
+            nomeJarInstrumentado = listaJar[j].split(
+                "/")  # recupera o nome do jar
             listaJarInstrumentados = listaJarInstrumentados + path_suite + "/" + nomeJarInstrumentado[len(
                 nomeJarInstrumentado) - 1] + ":"  # nome do jar fica na ultima posicao da lista, : sao colocados para separar os jars
 
@@ -102,10 +118,11 @@ class Coverage_Report(Setup_tool):
         #Importante mencionar, que seria necessário criar um objeto do tipo Suite...
         self.test_suite = self.get_new_suite(path_suite)
 
-        self.run_test_suite(listaJarInstrumentados, evo.project_dep.sut_class, listaJarInstrumentados,
-                            evo.project_dep)
+        self.run_test_suite(listaJarInstrumentados, targets,
+                            listaJarInstrumentados, evo.project_dep)
 
-        listaJar = list(filter(lambda x: x != '', listaJar))  # filtra registros vazios da lista
+        # filtra registros vazios da lista
+        listaJar = list(filter(lambda x: x != '', listaJar))
 
         print("Gerando report em html")
         jacoco.generateReportHtml(path_suite, listaJar, classeTarget)
@@ -114,58 +131,17 @@ class Coverage_Report(Setup_tool):
         dadosReportProjeto = self.reportProjetoCompleto(path_suite)
 
         print("Gerando analise da classe target")
-        dadosReportClasseTarget = self.reportClasseTarget(path_suite, listaPacoteMetodoClasse)
+        dadosReportClasseTarget = self.reportClasseTarget(
+            path_suite, listaPacoteMetodoClasse)
 
         print("Gerando analise do metodo target")
         if ("(" in listaPacoteMetodoClasse[0]) & (")" in listaPacoteMetodoClasse[0]):
-            dadosReportMetodoTarget = self.reportMetodoTarget(path_suite, listaPacoteMetodoClasse)
+            dadosReportMetodoTarget = self.reportMetodoTarget(
+                path_suite, listaPacoteMetodoClasse)
         else:
             dadosReportMetodoTarget = [False]
 
         return [dadosReportProjeto, dadosReportClasseTarget, dadosReportMetodoTarget]
-
-    # recupera pacote, nome da classe ou metodo target do teste
-    def recuperaClassePacoteMetodo(self, pathMetodo, pathClasse):
-        listaPacoteClasse = pathClasse.split(".")
-        nomeClasse = listaPacoteClasse[len(listaPacoteClasse) - 1] # ultima posicao
-        listaPacoteClasse.remove(nomeClasse)
-        pacote = ".".join(listaPacoteClasse)
-        nomeMetodo = pathMetodo[len(pathClasse) + 1:len(pathMetodo)]
-        nomeMetodo = self.adjust_on_method_name(nomeMetodo)
-        #nomeClasse = nomeClasse.replace("$",".")
-        print("Metodo target: " + nomeMetodo)
-        print("Classe target: " + nomeClasse)
-        return [nomeMetodo, nomeClasse, pacote]
-
-    # Ajusta nome do metodo removendo pacote do parametro dentro do metodo
-    # Ex : getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema) ->  getSchemaFromAnnotation(Schema)
-    def adjust_on_method_name(self, method_name):
-        if ("(" in method_name) & (")" in method_name) & ("." in method_name):
-            print("Required Adjust on Target Method Name")
-            first_parenthesis = method_name.find("(")
-            last_parenthesis = method_name.find(")")
-            parameters = self.adjust_on_parameters(method_name[first_parenthesis:last_parenthesis])
-            method_name = method_name[0:first_parenthesis + 1] + parameters + method_name[last_parenthesis] #")"# contatena por exemplo getSchemaFromAnnotation( + Schema)
-        return method_name
-
-    def adjust_on_parameters(self, parameters):
-        parameters_list = parameters.split(",")
-        adjusted_parameters = []
-        for item in range (len(parameters_list)):
-            if "." in parameters_list[item]:
-                posicaoUltimoPonto = parameters_list[item].rindex(".")
-                parameters_list[item] = parameters_list[item][posicaoUltimoPonto + 1:len(parameters_list[item])].replace("$", ".")
-            else:
-                parameters_list[item] = parameters_list[item][1:]
-            adjusted_parameters.append(parameters_list[item])
-
-        parameters = ""
-        for item in range(len(adjusted_parameters)):
-            parameters += adjusted_parameters[item]
-            if (item < len(adjusted_parameters)-1):
-                parameters += ", "
-
-        return parameters
 
     def reportProjetoCompleto(self, path_suite):
         reportHtml = codecs.open(path_suite + "/report/index.html", 'r')

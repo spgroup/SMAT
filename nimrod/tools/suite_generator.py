@@ -7,6 +7,8 @@ import subprocess
 import threading
 
 from collections import namedtuple
+from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.utils import get_java_files
 from nimrod.utils import generate_classpath
@@ -23,7 +25,7 @@ Suite = namedtuple('Suite', ['suite_name', 'suite_dir', 'suite_classes_dir',
 
 class SuiteGenerator(ABC):
 
-    def __init__(self, java, classpath, tests_src, sut_class, sut_classes=None, sut_method=None, params=None):
+    def __init__(self, java, classpath, tests_src, sut_class=None, sut_classes=None, sut_method=None, params=None, scenario: MergeScenario = None, input: SmatInput = None):
         self.java = java
         self.tests_src = tests_src
         self.classpath = classpath
@@ -34,6 +36,8 @@ class SuiteGenerator(ABC):
         self.suite_dir = None
         self.suite_classes_dir = None
         self.suite_name = self._set_suite_name()
+        self.scenario = scenario
+        self.input = input
 
     @abstractmethod
     def _exec_tool(self):

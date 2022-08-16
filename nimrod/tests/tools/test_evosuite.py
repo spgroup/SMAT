@@ -2,6 +2,8 @@ from unittest import TestCase
 
 import os
 import shutil
+from nimrod.input_parsing.smat_input import ScenarioInformation, SmatInput
+from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.tests.utils import get_config
 from nimrod.tests.utils import calculator_project_dir
@@ -26,6 +28,18 @@ class TestEvosuite(TestCase):
 
         self.maven.compile(calculator_project_dir(), 10)
 
+    def _get_testing_input(self) -> SmatInput:
+        return SmatInput(
+            project_name="testing-project",
+            run_analysis=True,
+            scenario_commits=ScenarioInformation(
+                base="abcdef", left="fedcba", right="defabc", merge="fedcba"),
+            scenario_jars=ScenarioInformation(
+                base="abcdef", left="fedcba", right="defabc", merge="fedcba"),
+            jar_type="transformation",
+            targets={'br.ufal.ic.easy.operations.Sum': []}
+        )
+
     def test_generate(self):
 
         tests_src = os.path.join(calculator_project_dir(), 'evosuite')
@@ -34,8 +48,8 @@ class TestEvosuite(TestCase):
             java=self.java,
             classpath=os.path.join(calculator_target_dir(), 'classes'),
             tests_src=tests_src,
-            sut_class='br.ufal.ic.easy.operations.Sum',
-            params=['-Dsearch_budget=1']
+            params=['-Dsearch_budget=1'],
+            input=self._get_testing_input()
         )
 
         (suite_name, suite_dir, suite_classes_dir,
@@ -46,7 +60,7 @@ class TestEvosuite(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(1, len(suite_classes))
+        self.assertEqual(1, len(suite_classes))
 
         shutil.rmtree(tests_src)
 
@@ -58,8 +72,8 @@ class TestEvosuite(TestCase):
             java=self.java,
             classpath=os.path.join(calculator_target_dir(), 'classes'),
             tests_src=tests_src,
-            sut_class='br.ufal.ic.easy.operations.Sum',
-            params=['-Dsearch_budget=1']
+            params=['-Dsearch_budget=1'],
+            input=self._get_testing_input()
         )
 
         mutants = MuJava(java=self.java,
@@ -73,7 +87,7 @@ class TestEvosuite(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(1, len(suite_classes))
+        self.assertEqual(1, len(suite_classes))
 
         shutil.rmtree(tests_src)
 
