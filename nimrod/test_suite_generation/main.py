@@ -1,5 +1,7 @@
+from datetime import date
 import logging
 from os import path
+import time
 from typing import Dict, List
 
 from nimrod.test_suite_generation.generators.test_suite_generator import TestSuiteGenerator
@@ -16,7 +18,8 @@ class TestSuiteGeneration:
         test_suites: List[TestSuite] = list()
 
         for generator in self._test_suite_generators:
-            output_path = path.join(get_base_output_path(), project, commit, generator.get_generator_tool_name())
+            suite_dir = generator.get_generator_tool_name() + "_" + str(int(time.time()))
+            output_path = path.join(get_base_output_path(), project, commit[:6], suite_dir)
             tests_class_path = generator.generate_and_compile_test_suite(input_jar, output_path, targets)
 
             test_suites.append(TestSuite(
