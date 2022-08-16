@@ -78,7 +78,7 @@ class Java:
         try:
             command = [program] + list(args)
 
-            logging.debug(command)
+            logging.debug(f"Starting execution of java command: {' '.join(command)}")
 
             return subprocess.check_output(command, cwd=cwd, env=env,
                                            timeout=timeout,
@@ -109,7 +109,7 @@ class Java:
 
         return env
 
-    def compile_all(self, classpath, directory):
+    def compile_all(self, classpath, directory: str):
         if os.path.exists(directory):
             java_files = get_java_files(directory)
             for java_file in java_files:

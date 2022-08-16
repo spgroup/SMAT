@@ -1,0 +1,51 @@
+import os
+from typing import Dict, List
+
+from nimrod.test_suite_generation.generators.test_suite_generator import \
+    TestSuiteGenerator
+from nimrod.tests.utils import get_config
+from nimrod.tools.bin import RANDOOP
+from nimrod.utils import generate_classpath
+
+
+class RandoopTestSuiteGenerator(TestSuiteGenerator):
+    SEARCH_BUDGET = int(get_config().get('randoop_search_budget', 300))
+
+    TARGET_METHODS_LIST_FILENAME = 'methods_to_test.txt'
+    TARGET_CLASS_LIST_FILENAME = 'classes_to_test.txt'
+
+    def get_generator_tool_name(self) -> str:
+        return "RANDOOP"
+
+    def _get_tool_parameters_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> List[str]:
+        return [
+            '-classpath', generate_classpath([input_jar, RANDOOP]),
+            'randoop.main.Main',
+            'gentests',
+            '--randomseed=10',
+            f"--time-limit={int(self.SEARCH_BUDGET)}",
+            '--junit-output-dir=' + output_path,
+            f'--classlist={self._generate_target_classes_file(output_path, targets)}',
+            f'--methodlist={self._generate_target_methods_file(output_path, targets)}'
+        ]
+
+    def _generate_target_classes_file(self, output_path: str, targets: "Dict[str, List[str]]"):
+        filename = os.path.join(output_path, self.TARGET_CLASS_LIST_FILENAME)
+
+        with open(filename, 'w') as f:
+            fqcns = targets.keys()
+            [f.write(fqcn.replace(" ", "") + "\n") for fqcn in fqcns]
+            f.close()
+
+        return filename
+
+    def _generate_target_methods_file(self, output_path: str, targets: "Dict[str, List[str]]"):
+        filename = os.path.join(output_path, self.TARGET_METHODS_LIST_FILENAME)
+
+        with open(filename, 'w') as f:
+            for fqcn, methods in targets.items():
+                for method in methods:
+                    method_signature = fqcn + "." + method
+                    f.write(method_signature)
+
+        return filename

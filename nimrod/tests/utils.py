@@ -75,4 +75,12 @@ def setup_logging():
     config = get_config()
     config_level = config.get('logger_level')
     level = logging._nameToLevel[config_level] if config_level else logging.INFO
-    logging.basicConfig(level=level)
+    logging.basicConfig(
+        level=level,
+        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
+
+def get_base_output_path() -> str:
+    return os.getcwd().replace("/nimrod/proj", "/")+'/output-test-dest/' if os.getcwd().__contains__("/nimrod/proj") else os.getcwd() + "/output-test-dest/"
