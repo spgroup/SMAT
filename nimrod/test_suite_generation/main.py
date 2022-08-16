@@ -5,17 +5,17 @@ from nimrod.test_suite_generation.test_suite import TestSuite
 
 
 class TestSuiteGeneration:
-    _testSuiteGenerators: List[TestSuiteGenerator]
+    _test_suite_generators: List[TestSuiteGenerator]
 
-    def __init__(self, testSuiteGenerators: List[TestSuiteGenerator]) -> None:
-        self._testSuiteGenerators = testSuiteGenerators
+    def __init__(self, test_suite_generators: List[TestSuiteGenerator]) -> None:
+        self._test_suite_generators = test_suite_generators
 
-    def generateTestSuites(self, project: str, commit: str, inputJar: str, targets: "Dict[str, List[str]]") -> List[TestSuite]:
-        testSuites: List[TestSuite] = list()
+    def generate_test_suites(self, project: str, commit: str, input_jar: str, targets: "Dict[str, List[str]]") -> List[TestSuite]:
+        test_suites: List[TestSuite] = list()
 
-        for generator in self._testSuiteGenerators:
-            outputPath = project + inputJar + commit
-            testSuite = generator.generateTestSuite(inputJar, outputPath, targets)
-            testSuites.append(testSuite)
+        for generator in self._test_suite_generators:
+            output_path = project + input_jar + commit
+            test_suite = generator.generate_test_suite(input_jar, output_path, targets)
+            test_suites.append(test_suite)
 
-        return testSuites
+        return test_suites
