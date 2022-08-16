@@ -5,21 +5,27 @@ from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
 from nimrod.tests.utils import get_config
 from nimrod.tools.bin import RANDOOP
+from nimrod.tools.java import Java
 from nimrod.utils import generate_classpath
 
 
 class RandoopTestSuiteGenerator(TestSuiteGenerator):
-    SEARCH_BUDGET = int(get_config().get('randoop_search_budget', 300))
+    SEARCH_BUDGET = int(get_config().get('test_suite_generation_search_budget', 300))
 
     TARGET_METHODS_LIST_FILENAME = 'methods_to_test.txt'
     TARGET_CLASS_LIST_FILENAME = 'classes_to_test.txt'
 
+    def __init__(self, java: Java, randoop_jar: str, randoop_version: str) -> None:
+        super().__init__(java)
+        self._randoop_jar = randoop_jar
+        self._randoop_version = randoop_version
+
     def get_generator_tool_name(self) -> str:
-        return "RANDOOP"
+        return self._randoop_version
 
     def _get_tool_parameters_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> List[str]:
         return [
-            '-classpath', generate_classpath([input_jar, RANDOOP]),
+            '-classpath', generate_classpath([input_jar, self._randoop_jar]),
             'randoop.main.Main',
             'gentests',
             '--randomseed=10',
