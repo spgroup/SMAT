@@ -8,8 +8,6 @@ from nimrod.tests.utils import get_base_output_path
 
 
 class TestSuiteGeneration:
-    _test_suite_generators: List[TestSuiteGenerator]
-
     def __init__(self, test_suite_generators: List[TestSuiteGenerator]) -> None:
         self._test_suite_generators = test_suite_generators
 
