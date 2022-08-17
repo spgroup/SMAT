@@ -21,7 +21,7 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
               '-jar', EVOSUITE,
               '-projectCP', input_jar,
               '-class', class_name,
-              '-Dtimeout', '40',
+              '-Dtimeout', '5',
               '-Dassertion_strategy=all',
               '-Dp_reflection_on_private=0',
               '-Dreflection_start_percent=0',
