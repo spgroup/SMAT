@@ -18,8 +18,7 @@ class TestSuiteGenerator(ABC):
         makedirs(path.join(output_path, "classes"), exist_ok=True)
 
         logging.info(f"Starting generation with {self.get_generator_tool_name()}")
-        params = self._get_tool_parameters_for_tests_generation(input_jar, output_path, targets)
-        self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
+        self._execute_tool_for_tests_generation(input_jar, output_path, targets)
         logging.info(f"Finished generation with {self.get_generator_tool_name()}")
 
         logging.info(f"Starting compilation for suite generated with {self.get_generator_tool_name()}")
@@ -33,11 +32,11 @@ class TestSuiteGenerator(ABC):
         pass
 
     @abstractmethod
-    def _get_tool_parameters_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> List[str]:
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> None:
         pass
 
-    def _compile_test_suite(self, input_jar: str, output_path: str) -> List[str]:
+    def _compile_test_suite(self, input_jar: str, output_path: str, extra_class_path: List[str] = []) -> List[str]:
         compiled_classes = path.join(output_path, 'classes')
-        class_path = generate_classpath([input_jar, output_path, compiled_classes, JUNIT, HAMCREST])
+        class_path = generate_classpath([input_jar, output_path, compiled_classes, JUNIT, HAMCREST] + extra_class_path)
         self._java.compile_all(class_path, output_path)
         return class_path

@@ -4,7 +4,6 @@ from typing import Dict, List
 from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
 from nimrod.tests.utils import get_config
-from nimrod.tools.bin import RANDOOP
 from nimrod.tools.java import Java
 from nimrod.utils import generate_classpath
 
@@ -23,8 +22,8 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return self._randoop_version
 
-    def _get_tool_parameters_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> List[str]:
-        return [
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> None:
+        params = [
             '-classpath', generate_classpath([input_jar, self._randoop_jar]),
             'randoop.main.Main',
             'gentests',
@@ -34,6 +33,7 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
             f'--classlist={self._generate_target_classes_file(output_path, targets)}',
             f'--methodlist={self._generate_target_methods_file(output_path, targets)}'
         ]
+        self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
 
     def _generate_target_classes_file(self, output_path: str, targets: "Dict[str, List[str]]"):
         filename = os.path.join(output_path, self.TARGET_CLASS_LIST_FILENAME)
