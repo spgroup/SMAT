@@ -55,3 +55,6 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
                     f.write(method_signature)
 
         return filename
+
+    def _get_test_suite_class_paths(self, test_suite_path: str) -> List[str]:
+        return [os.path.join(test_suite_path, "RegressionTest.java")]

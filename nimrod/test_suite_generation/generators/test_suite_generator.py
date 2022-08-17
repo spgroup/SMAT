@@ -32,11 +32,18 @@ class TestSuiteGenerator(ABC):
         pass
 
     @abstractmethod
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, targets: "Dict[str, List[str]]") -> None:
+        pass
+
+    @abstractmethod
+    def _get_test_suite_class_paths(self, test_suite_path: str) -> List[str]:
         pass
 
     def _compile_test_suite(self, input_jar: str, test_suite_path: str, extra_class_path: List[str] = []) -> List[str]:
         compiled_classes_path = path.join(test_suite_path, 'classes')
         class_path = generate_classpath([input_jar, test_suite_path, compiled_classes_path, JUNIT, HAMCREST] + extra_class_path)
-        self._java.compile_all(class_path, test_suite_path, compiled_classes_path)
+
+        for java_file in self._get_test_suite_class_paths(test_suite_path):
+            self._java.exec_javac(java_file, test_suite_path, None, None,
+                                  '-classpath', class_path, '-d', compiled_classes_path)
         return class_path

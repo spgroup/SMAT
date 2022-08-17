@@ -16,7 +16,7 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
 
     def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> None:
         for class_name, methods in targets.items():
-          logging.info(f"Starting generation for class {class_name}")
+          logging.debug(f"Starting generation for class {class_name}")
           params = [
               '-jar', EVOSUITE,
               '-projectCP', input_jar,
@@ -39,14 +39,17 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
                 f'-Dtarget_method_list="{self.create_method_list(methods)}"')
 
           self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
-        self._remove_unused_files_from_suite(os.path.join(output_path, "evosuite-tests"))
 
-    def _remove_unused_files_from_suite(self, path):
-      for node in os.listdir(path):
-        if os.path.isdir(os.path.join(path, node)):
-          self._remove_unused_files_from_suite(os.path.join(path, node))
-        elif not node.endswith("_scaffolding.java"):
-          os.remove(os.path.join(path, node))
+    def _get_test_suite_class_paths(self, path: str) -> List[str]:
+        paths = []
+
+        for node in os.listdir(path):
+            if os.path.isdir(os.path.join(path, node)):
+                paths += self._get_test_suite_class_paths(os.path.join(path, node))
+            elif node.endswith("_scaffolding.java"):
+                paths.append(os.path.join(path, node))
+
+        return paths
 
     # Evosuite needs to add its own Runtime in order to compile test suite
     def _compile_test_suite(self, input_jar: str, output_path: str, extra_class_path: List[str] = []) -> List[str]:
