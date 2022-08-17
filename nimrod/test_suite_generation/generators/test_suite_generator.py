@@ -18,25 +18,28 @@ class TestSuiteGenerator(ABC):
 
     def generate_and_compile_test_suite(self, project: str, commit: str, input_jar: str, targets: "Dict[str, List[str]]") -> TestSuite:
         suite_dir = self.get_generator_tool_name() + "_" + str(int(time()))
-        output_path = path.join(get_base_output_path(), project, commit[:6], suite_dir)
+        test_suite_path = path.join(get_base_output_path(), project, commit[:6], suite_dir)
 
-        makedirs(output_path, exist_ok=True)
-        makedirs(path.join(output_path, "classes"), exist_ok=True)
+        makedirs(test_suite_path, exist_ok=True)
+        makedirs(path.join(test_suite_path, "classes"), exist_ok=True)
 
         logging.info(f"Starting generation with {self.get_generator_tool_name()}")
-        self._execute_tool_for_tests_generation(input_jar, output_path, targets)
+        self._execute_tool_for_tests_generation(input_jar, test_suite_path, targets)
         logging.info(f"Finished generation with {self.get_generator_tool_name()}")
 
         logging.info(f"Starting compilation for suite generated with {self.get_generator_tool_name()}")
-        tests_class_path = self._compile_test_suite(input_jar, output_path)
+        tests_class_path = self._compile_test_suite(input_jar, test_suite_path)
         logging.info(f"Finished compilation for suite generated with {self.get_generator_tool_name()}")
+
+        print(self._get_test_suite_class_names(test_suite_path))
 
         return TestSuite(
             generator_name=self.get_generator_tool_name(),
             class_path=tests_class_path,
             commit=commit,
             project=project,
-            path=output_path,
+            path=test_suite_path,
+            test_classes_names=self._get_test_suite_class_names(test_suite_path)
         )
 
     @abstractmethod
@@ -49,6 +52,10 @@ class TestSuiteGenerator(ABC):
 
     @abstractmethod
     def _get_test_suite_class_paths(self, test_suite_path: str) -> List[str]:
+        pass
+
+    @abstractmethod
+    def _get_test_suite_class_names(self, test_suite_path: str) -> List[str]:
         pass
 
     def _compile_test_suite(self, input_jar: str, test_suite_path: str, extra_class_path: List[str] = []) -> List[str]:

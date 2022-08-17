@@ -36,7 +36,7 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
 
           if(len(methods) > 0):
             params.append(
-                f'-Dtarget_method_list="{self.create_method_list(methods)}"')
+                f'-Dtarget_method_list="{self._create_method_list(methods)}"')
 
           self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
 
@@ -51,16 +51,26 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
 
         return paths
 
+    def _get_test_suite_class_names(self, test_suite_path: str) -> List[str]:
+        class_names = []
+
+        for class_path in self._get_test_suite_class_paths(test_suite_path):
+            class_fqcn = os.path.relpath(class_path, os.path.join(
+                test_suite_path, "evosuite-tests")).replace(os.sep, ".")
+            class_names.append(class_fqcn[:-5])
+
+        return class_names
+
     # Evosuite needs to add its own Runtime in order to compile test suite
     def _compile_test_suite(self, input_jar: str, output_path: str, extra_class_path: List[str] = []) -> List[str]:
         return super()._compile_test_suite(input_jar, output_path, [EVOSUITE_RUNTIME] + extra_class_path)
 
-    def create_method_list(self, methods: "List[str]"):
-        rectified_methods = [self.convert_method_signature(
+    def _create_method_list(self, methods: "List[str]"):
+        rectified_methods = [self._convert_method_signature(
             method) for method in methods]
         return (":").join(rectified_methods)
 
-    def convert_method_signature(self, meth_signature: str) -> str:
+    def _convert_method_signature(self, meth_signature: str) -> str:
         method_return = ""
         try:
             method_return = meth_signature.split(")")[1]

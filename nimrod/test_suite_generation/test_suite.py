@@ -2,12 +2,13 @@ from typing import List
 
 
 class TestSuite:
-    def __init__(self, generator_name: str, commit: str, project: str, path: str, class_path: List[str]) -> None:
+    def __init__(self, generator_name: str, commit: str, project: str, path: str, class_path: List[str], test_classes_names: List[str]) -> None:
         self._generator_name = generator_name
         self._commit = commit
         self._project = project
         self._path = path
         self._class_path = class_path
+        self._test_classes_names = test_classes_names
 
     @property
     def generator_name(self) -> str:
@@ -28,3 +29,7 @@ class TestSuite:
     @property
     def class_path(self) -> List[str]:
         return self._class_path
+
+    @property
+    def test_classes_names(self) -> List[str]:
+        return self._test_classes_names
