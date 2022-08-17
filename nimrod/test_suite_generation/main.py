@@ -17,7 +17,10 @@ class TestSuiteGeneration:
         test_suites: List[TestSuite] = list()
 
         for generator in self._test_suite_generators:
-            test_suites.append(generator.generate_and_compile_test_suite(project, commit, input_jar, targets))
+            try:
+                test_suites.append(generator.generate_and_compile_test_suite(project, commit, input_jar, targets))
+            except:
+                logging.error(f"It was not possible to generate test suite using {generator.get_generator_tool_name()}")
 
         logging.info("Finished tests generation for project %s commit %s with jar %s", project, commit, input_jar)
         return test_suites

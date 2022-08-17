@@ -31,8 +31,6 @@ class TestSuiteGenerator(ABC):
         tests_class_path = self._compile_test_suite(input_jar, test_suite_path)
         logging.info(f"Finished compilation for suite generated with {self.get_generator_tool_name()}")
 
-        print(self._get_test_suite_class_names(test_suite_path))
-
         return TestSuite(
             generator_name=self.get_generator_tool_name(),
             class_path=tests_class_path,
