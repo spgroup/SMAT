@@ -1,10 +1,8 @@
-from datetime import date
 import logging
-from os import path
-import time
 from typing import Dict, List
 
-from nimrod.test_suite_generation.generators.test_suite_generator import TestSuiteGenerator
+from nimrod.test_suite_generation.generators.test_suite_generator import \
+    TestSuiteGenerator
 from nimrod.test_suite_generation.test_suite import TestSuite
 
 
