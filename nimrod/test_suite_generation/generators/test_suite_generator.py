@@ -1,8 +1,11 @@
-
 from abc import ABC, abstractmethod
 import logging
 from os import makedirs, path
+from time import time
 from typing import Dict, List
+
+from nimrod.tests.utils import get_base_output_path
+from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.tools.bin import HAMCREST, JUNIT
 
 from nimrod.tools.java import Java
@@ -13,7 +16,10 @@ class TestSuiteGenerator(ABC):
     def __init__(self, java: Java) -> None:
         self._java = java
 
-    def generate_and_compile_test_suite(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> List[str]:
+    def generate_and_compile_test_suite(self, project: str, commit: str, input_jar: str, targets: "Dict[str, List[str]]") -> TestSuite:
+        suite_dir = self.get_generator_tool_name() + "_" + str(int(time()))
+        output_path = path.join(get_base_output_path(), project, commit[:6], suite_dir)
+
         makedirs(output_path, exist_ok=True)
         makedirs(path.join(output_path, "classes"), exist_ok=True)
 
@@ -25,7 +31,13 @@ class TestSuiteGenerator(ABC):
         tests_class_path = self._compile_test_suite(input_jar, output_path)
         logging.info(f"Finished compilation for suite generated with {self.get_generator_tool_name()}")
 
-        return tests_class_path
+        return TestSuite(
+            generator_name=self.get_generator_tool_name(),
+            class_path=tests_class_path,
+            commit=commit,
+            project=project,
+            path=output_path,
+        )
 
     @abstractmethod
     def get_generator_tool_name(self) -> str:
