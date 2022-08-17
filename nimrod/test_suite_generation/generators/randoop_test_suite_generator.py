@@ -1,5 +1,6 @@
 import os
 from typing import Dict, List
+from nimrod.input_parsing.smat_input import SmatInput
 
 from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
@@ -22,7 +23,7 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return self._randoop_version
 
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput) -> None:
         params = [
             '-classpath', generate_classpath([input_jar, self._randoop_jar]),
             'randoop.main.Main',
@@ -30,8 +31,8 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
             '--randomseed=10',
             f"--time-limit={int(self.SEARCH_BUDGET)}",
             '--junit-output-dir=' + output_path,
-            f'--classlist={self._generate_target_classes_file(output_path, targets)}',
-            f'--methodlist={self._generate_target_methods_file(output_path, targets)}'
+            f'--classlist={self._generate_target_classes_file(output_path, scenario.targets)}',
+            f'--methodlist={self._generate_target_methods_file(output_path, scenario.targets)}'
         ]
         self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
 

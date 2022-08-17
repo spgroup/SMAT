@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Dict, List
+from nimrod.input_parsing.smat_input import SmatInput
 
 from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
@@ -14,8 +15,8 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return "EVOSUITE"
 
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, targets: "Dict[str, List[str]]") -> None:
-        for class_name, methods in targets.items():
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput) -> None:
+        for class_name, methods in scenario.targets.items():
           logging.debug(f"Starting generation for class {class_name}")
           params = [
               '-jar', EVOSUITE,

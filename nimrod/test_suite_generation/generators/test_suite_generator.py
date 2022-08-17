@@ -4,6 +4,7 @@ from os import makedirs, path
 from time import time
 from typing import Dict, List
 
+from nimrod.input_parsing.smat_input import SmatInput
 from nimrod.tests.utils import get_base_output_path
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.tools.bin import HAMCREST, JUNIT
@@ -16,15 +17,15 @@ class TestSuiteGenerator(ABC):
     def __init__(self, java: Java) -> None:
         self._java = java
 
-    def generate_and_compile_test_suite(self, project: str, commit: str, input_jar: str, targets: "Dict[str, List[str]]") -> TestSuite:
+    def generate_and_compile_test_suite(self, scenario: SmatInput, input_jar: str) -> TestSuite:
         suite_dir = self.get_generator_tool_name() + "_" + str(int(time()))
-        test_suite_path = path.join(get_base_output_path(), project, commit[:6], suite_dir)
+        test_suite_path = path.join(get_base_output_path(), scenario.project_name, scenario.scenario_commits.merge[:6], suite_dir)
 
         makedirs(test_suite_path, exist_ok=True)
         makedirs(path.join(test_suite_path, "classes"), exist_ok=True)
 
         logging.info(f"Starting generation with {self.get_generator_tool_name()}")
-        self._execute_tool_for_tests_generation(input_jar, test_suite_path, targets)
+        self._execute_tool_for_tests_generation(input_jar, test_suite_path, scenario)
         logging.info(f"Finished generation with {self.get_generator_tool_name()}")
 
         logging.info(f"Starting compilation for suite generated with {self.get_generator_tool_name()}")
@@ -34,8 +35,6 @@ class TestSuiteGenerator(ABC):
         return TestSuite(
             generator_name=self.get_generator_tool_name(),
             class_path=tests_class_path,
-            commit=commit,
-            project=project,
             path=test_suite_path,
             test_classes_names=self._get_test_suite_class_names(test_suite_path)
         )
@@ -45,7 +44,7 @@ class TestSuiteGenerator(ABC):
         pass
 
     @abstractmethod
-    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, targets: "Dict[str, List[str]]") -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, scenario: SmatInput) -> None:
         pass
 
     @abstractmethod

@@ -1,5 +1,8 @@
+from typing import List, Dict
+
+
 class SmatInput:
-    def __init__(self, project_name: str, run_analysis: bool, scenario_commits: "ScenarioInformation", targets: "dict[str, list[str]]", scenario_jars: "ScenarioInformation", jar_type: str):
+    def __init__(self, project_name: str, run_analysis: bool, scenario_commits: "ScenarioInformation", targets: "Dict[str, List[str]]", scenario_jars: "ScenarioInformation", jar_type: str):
         self.project_name = project_name
         self.run_analysis = run_analysis
         self.scenario_commits = scenario_commits
