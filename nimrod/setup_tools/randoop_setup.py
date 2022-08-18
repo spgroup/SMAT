@@ -1,22 +1,13 @@
 from nimrod.input_parsing.smat_input import SmatInput
 from nimrod.setup_tools.setup_tool import Setup_tool
-from nimrod.tools.randoop import Randoop
+from nimrod.tools.bin import RANDOOP
+from nimrod.test_suite_generation.generators.randoop_test_suite_generator import RandoopTestSuiteGenerator
 
 
 class Randoop_setup(Setup_tool):
 
     def generate_test_suite(self, scenario, project_dep, input: SmatInput):
-        randoop = Randoop(
-            java=project_dep.java,
-            classpath=project_dep.parentReg,
-            tests_src=project_dep.tests_dst + '/' + project_dep.project.get_project_name() +
-            '/' + input.scenario_commits.merge,
-            sut_class=project_dep.sut_class,
-            sut_classes=project_dep.sut_classes,
-            sut_method=project_dep.sut_method,
-            params=self.tool_parameters,
-            scenario=scenario,
-            input=input
-        )
-        self.test_suite = randoop.generate_with_impact_analysis()
+        randoop = RandoopTestSuiteGenerator(project_dep.java, RANDOOP, "RANDOOP")
+        new_suite = randoop.generate_and_compile_test_suite(input, project_dep.parentReg)
+        self.test_suite = self._convert_new_suite_to_old_test_suite(new_suite)
         return self.test_suite
