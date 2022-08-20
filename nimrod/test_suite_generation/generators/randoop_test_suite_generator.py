@@ -23,17 +23,22 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return self._randoop_version
 
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput) -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput, use_determinism: bool) -> None:
         params = [
             '-classpath', generate_classpath([input_jar, self._randoop_jar]),
             'randoop.main.Main',
             'gentests',
-            '--randomseed=10',
-            f"--time-limit={int(self.SEARCH_BUDGET)}",
             '--junit-output-dir=' + output_path,
             f'--classlist={self._generate_target_classes_file(output_path, scenario.targets)}',
             f'--methodlist={self._generate_target_methods_file(output_path, scenario.targets)}'
         ]
+
+        if use_determinism:
+            params += ["--randomseed=10",
+                       "--deterministic", "--time-limit=0", "--attempted-limit=4000"]
+        else:
+            params += [f"--time-limit={int(self.SEARCH_BUDGET)}"]
+
         self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
 
     def _generate_target_classes_file(self, output_path: str, targets: "Dict[str, List[str]]"):

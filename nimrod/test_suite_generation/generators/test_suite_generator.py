@@ -17,7 +17,10 @@ class TestSuiteGenerator(ABC):
     def __init__(self, java: Java) -> None:
         self._java = java
 
-    def generate_and_compile_test_suite(self, scenario: SmatInput, input_jar: str) -> TestSuite:
+    def generate_and_compile_test_suite(self, scenario: SmatInput, input_jar: str, use_determinism: bool) -> TestSuite:
+        if use_determinism:
+            logging.debug('Using deterministic test suite generation')
+            
         suite_dir = self.get_generator_tool_name() + "_" + str(int(time()))
         test_suite_path = path.join(get_base_output_path(), scenario.project_name, scenario.scenario_commits.merge[:6], suite_dir)
 
@@ -25,7 +28,7 @@ class TestSuiteGenerator(ABC):
         makedirs(path.join(test_suite_path, "classes"), exist_ok=True)
 
         logging.info(f"Starting generation with {self.get_generator_tool_name()}")
-        self._execute_tool_for_tests_generation(input_jar, test_suite_path, scenario)
+        self._execute_tool_for_tests_generation(input_jar, test_suite_path, scenario, use_determinism)
         logging.info(f"Finished generation with {self.get_generator_tool_name()}")
 
         logging.info(f"Starting compilation for suite generated with {self.get_generator_tool_name()}")
@@ -44,7 +47,7 @@ class TestSuiteGenerator(ABC):
         pass
 
     @abstractmethod
-    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, scenario: SmatInput) -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, scenario: SmatInput, use_determinism: bool) -> None:
         pass
 
     @abstractmethod

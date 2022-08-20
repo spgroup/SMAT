@@ -10,13 +10,14 @@ class TestSuiteGeneration:
     def __init__(self, test_suite_generators: List[TestSuiteGenerator]) -> None:
         self._test_suite_generators = test_suite_generators
 
-    def generate_test_suites(self, scenario: SmatInput, input_jar: str) -> List[TestSuite]:
+    def generate_test_suites(self, scenario: SmatInput, input_jar: str, use_determinism: bool) -> List[TestSuite]:
         logging.info("Starting tests generation for project %s using jar %s", scenario.project_name, input_jar)
         test_suites: List[TestSuite] = list()
 
         for generator in self._test_suite_generators:
             try:
-                test_suites.append(generator.generate_and_compile_test_suite(scenario, input_jar))
+                test_suites.append(generator.generate_and_compile_test_suite(
+                    scenario, input_jar, use_determinism))
             except Exception as error:
                 logging.error(f"It was not possible to generate test suite using {generator.get_generator_tool_name()}")
                 logging.debug(error)

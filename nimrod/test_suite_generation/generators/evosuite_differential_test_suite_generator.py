@@ -11,7 +11,7 @@ class EvosuiteDifferentialTestSuiteGenerator(EvosuiteTestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return "EVOSUITE_DIFFERENTIAL"
 
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput) -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput, use_determinism: bool) -> None:
         for class_name, methods in scenario.targets.items():
           logging.debug(f"Starting generation for class {class_name}")
           params = [
