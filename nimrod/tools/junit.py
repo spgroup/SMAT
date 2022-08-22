@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import time
@@ -138,15 +139,15 @@ class JUnit:
 
             if len(i) > 0:
                 if ((is_failed_caused_by_compilation_problem(test_case, output) == True)):
-                    print("\n*** ERROR: test case "+test_case+" was not executable in project version. \n")
+                    logging.debug("\n*** ERROR: test case "+test_case+" was not executable in project version. \n")
                     tests_not_executed_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
                     tests_not_executed.add(test_case)
                 elif ((is_failed_caused_by_error(test_case, output) == True)):
-                    print("\n*** ERROR: test case "+test_case+" with error \n")
+                    logging.debug("\n*** ERROR: test case "+test_case+" with error \n")
                     tests_not_executed_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
                     tests_not_executed.add(test_case)
                 else:
-                    print("\n*** Failed: test case " + test_case + ". \n")
+                    logging.debug("\n*** Failed: test case " + test_case + ". \n")
                     tests_fail_with_files.add('{0}#{1}'.format(file, test_case, int(i[-1])))
                     tests_fail.add(test_case)
             else:

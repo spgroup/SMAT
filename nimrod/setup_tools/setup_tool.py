@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
-from ast import Suite
 import logging
+import os
 from nimrod.input_parsing.smat_input import SmatInput
-from nimrod.project_info.commit import Commit
 from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.setup_tools.behaviour_check import Behaviour_check
+from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.tools.junit import JUnit
+
+from nimrod.tools.suite_generator import Suite
 
 
 class Setup_tool(ABC):
@@ -68,7 +70,8 @@ class Setup_tool(ABC):
                 self.check_behavior_change_commit_pair(test_results_right[0], test_results_right[1], test_results_right[2],
                                     test_results_right[4], commitBaseSha, commitParentRight, commitMergeSha, tool, conflict_info)
 
-        except:
+        except Exception as e:
+            logging.error(e)
             print("Some project versions could not be evaluated")
 
         return conflict_info
@@ -163,7 +166,7 @@ class Setup_tool(ABC):
         return res
 
     @abstractmethod
-    def generate_test_suite(self, scenario: MergeScenario, project_dep, input: SmatInput):
+    def generate_test_suite(self, scenario: MergeScenario, project_dep, input: SmatInput) -> Suite:
         pass
 
     def generate_and_run_test_suites_for_commit(self, evo, scenario: MergeScenario, commitOne, conflict_info, tool, input: SmatInput = None):
@@ -194,3 +197,11 @@ class Setup_tool(ABC):
             print("Some project versions could not be evaluated")
 
         return conflict_info
+
+    def _convert_new_suite_to_old_test_suite(self, suite: TestSuite) -> Suite:
+        return Suite(
+            suite_name=suite.path,
+            suite_dir=suite.path,
+            suite_classes_dir=os.path.join(suite.path, "classes"),
+            test_classes=suite.test_classes_names
+        )

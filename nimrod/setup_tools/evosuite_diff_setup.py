@@ -1,20 +1,14 @@
+from nimrod.input_parsing.smat_input import SmatInput
 from nimrod.setup_tools.setup_tool import Setup_tool
-from nimrod.tools.evosuite import Evosuite
+from nimrod.test_suite_generation.generators.evosuite_differential_test_suite_generator import EvosuiteDifferentialTestSuiteGenerator
+from nimrod.tests.utils import get_config
 
 
 class Evosuite_Diff_setup(Setup_tool):
 
-    def generate_test_suite(self, scenario, project_dep):
-
-        evosuite = Evosuite(
-            java=project_dep.java,
-            classpath=project_dep.parentReg,
-            sut_class=project_dep.sut_class,
-            sut_classes=project_dep.sut_classes,
-            sut_method=project_dep.sut_method,
-            params=self.tool_parameters,
-            tests_src=project_dep.tests_dst + '/' + project_dep.project.get_project_name() + '/' + scenario.merge_scenario.get_merge_hash()
-        )
-
-        self.test_suite = evosuite.generate_differential(project_dep.baseDir)
+    def generate_test_suite(self, scenario, project_dep, input: SmatInput = None):
+        use_determinism = bool(get_config().get('generate_deterministic_test_suites', False))
+        evosuite_diff = EvosuiteDifferentialTestSuiteGenerator(project_dep.java)
+        new_suite = evosuite_diff.generate_and_compile_test_suite(input, project_dep.parentReg, use_determinism)
+        self.test_suite = self._convert_new_suite_to_old_test_suite(new_suite)
         return self.test_suite
