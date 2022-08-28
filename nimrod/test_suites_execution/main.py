@@ -1,3 +1,5 @@
+import json
+import logging
 from typing import Dict, List
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.input_parsing.smat_input import ScenarioInformation as ScenarioJars
@@ -20,9 +22,13 @@ class TestSuitesExecution:
         results: List[TestSuiteExecutionOutput] = []
 
         for test_suite in test_suites:
+            logging.info("Starting execution of %s test suite in base", test_suite.generator_name)
             results_base = self._test_suite_executor.execute_test_suite(test_suite, scenario_jars.base)
+            logging.info("Starting execution of %s test suite in left", test_suite.generator_name)
             results_left = self._test_suite_executor.execute_test_suite(test_suite, scenario_jars.left)
+            logging.info("Starting execution of %s test suite in right", test_suite.generator_name)
             results_right = self._test_suite_executor.execute_test_suite(test_suite, scenario_jars.right)
+            logging.info("Starting execution of %s test suite in merge", test_suite.generator_name)
             results_merge = self._test_suite_executor.execute_test_suite(test_suite, scenario_jars.merge)
 
             test_results = self._merge_test_case_results(results_base, results_left, results_right, results_merge)

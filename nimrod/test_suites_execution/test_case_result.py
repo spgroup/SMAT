@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class TestCaseResult(Enum):
+class TestCaseResult(str, Enum):
     PASS = "PASS"
     FAIL = "FAIL"
     FLAKY = "FLAKY"
