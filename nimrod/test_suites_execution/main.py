@@ -6,19 +6,12 @@ from nimrod.test_suites_execution.test_case_result import TestCaseResult
 from nimrod.test_suites_execution.test_case_execution_in_merge_scenario import TestCaseExecutionInMergeScenario
 from nimrod.test_suites_execution.test_suite_executor import TestSuiteExecutor
 
-
-class TestSuiteExecutionOutput:
-    def __init__(self, test_suite: TestSuite, test_results: List[TestCaseExecutionInMergeScenario]):
-        self.test_suite = test_suite
-        self.test_results = test_results
-
-
 class TestSuitesExecution:
     def __init__(self, test_suite_executor: TestSuiteExecutor) -> None:
         self._test_suite_executor = test_suite_executor
 
-    def execute_test_suites(self, test_suites: List[TestSuite], scenario_jars: ScenarioJars) -> List[TestSuiteExecutionOutput]:
-        results: List[TestSuiteExecutionOutput] = []
+    def execute_test_suites(self, test_suites: List[TestSuite], scenario_jars: ScenarioJars) -> List[TestCaseExecutionInMergeScenario]:
+        results: List[TestCaseExecutionInMergeScenario] = []
 
         for test_suite in test_suites:
             logging.info("Starting execution of %s test suite in base", test_suite.generator_name)
@@ -30,23 +23,25 @@ class TestSuitesExecution:
             logging.info("Starting execution of %s test suite in merge", test_suite.generator_name)
             results_merge = self._test_suite_executor.execute_test_suite(test_suite, scenario_jars.merge)
 
-            test_results = self._merge_test_case_results(results_base, results_left, results_right, results_merge)
-
-            results.append(TestSuiteExecutionOutput(test_suite, test_results))
+            test_results = self._merge_test_case_results(test_suite, results_base, results_left, results_right, results_merge)
+            results += test_results
 
         return results
 
-    def _merge_test_case_results(self, results_base: Dict[str, TestCaseResult], results_left: Dict[str, TestCaseResult], results_right: Dict[str, TestCaseResult], results_merge: Dict[str, TestCaseResult]) -> List[TestCaseExecutionInMergeScenario]:
+    def _merge_test_case_results(self, test_suite: TestSuite, results_base: Dict[str, TestCaseResult], results_left: Dict[str, TestCaseResult], results_right: Dict[str, TestCaseResult], results_merge: Dict[str, TestCaseResult]) -> List[TestCaseExecutionInMergeScenario]:
         test_cases = results_base.keys()
         test_suite_results: List[TestCaseExecutionInMergeScenario] = list()
 
         for test_case in test_cases:
-            test_suite_results[test_case] = TestCaseExecutionInMergeScenario(
-                test_case,
-                results_base.get(test_case, TestCaseResult.NOT_EXECUTABLE),
-                results_left.get(test_case, TestCaseResult.NOT_EXECUTABLE),
-                results_right.get(test_case, TestCaseResult.NOT_EXECUTABLE),
-                results_merge.get(test_case, TestCaseResult.NOT_EXECUTABLE)
+            test_suite_results.append(
+                TestCaseExecutionInMergeScenario(
+                    test_suite,
+                    test_case,
+                    results_base.get(test_case, TestCaseResult.NOT_EXECUTABLE),
+                    results_left.get(test_case, TestCaseResult.NOT_EXECUTABLE),
+                    results_right.get(test_case, TestCaseResult.NOT_EXECUTABLE),
+                    results_merge.get(test_case, TestCaseResult.NOT_EXECUTABLE)
+                )
             )
 
         return test_suite_results
