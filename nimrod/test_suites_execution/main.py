@@ -1,17 +1,16 @@
-import json
 import logging
 from typing import Dict, List
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.input_parsing.smat_input import ScenarioInformation as ScenarioJars
 from nimrod.test_suites_execution.test_case_result import TestCaseResult
-from nimrod.test_suites_execution.test_case_result_in_merge_scenario import TestCaseResultInMergeScenario
+from nimrod.test_suites_execution.test_case_execution_in_merge_scenario import TestCaseExecutionInMergeScenario
 from nimrod.test_suites_execution.test_suite_executor import TestSuiteExecutor
 
 
 class TestSuiteExecutionOutput:
-    def __init__(self, test_suite: TestSuite, test_results: Dict[str, TestCaseResultInMergeScenario]):
-      self.test_suite = test_suite
-      self.test_results = test_results
+    def __init__(self, test_suite: TestSuite, test_results: List[TestCaseExecutionInMergeScenario]):
+        self.test_suite = test_suite
+        self.test_results = test_results
 
 
 class TestSuitesExecution:
@@ -37,16 +36,17 @@ class TestSuitesExecution:
 
         return results
 
-    def _merge_test_case_results(self, results_base:  Dict[str, TestCaseResult], results_left:  Dict[str, TestCaseResult], results_right:  Dict[str, TestCaseResult], results_merge:  Dict[str, TestCaseResult]) -> Dict[str, TestCaseResultInMergeScenario]:
+    def _merge_test_case_results(self, results_base: Dict[str, TestCaseResult], results_left: Dict[str, TestCaseResult], results_right: Dict[str, TestCaseResult], results_merge: Dict[str, TestCaseResult]) -> List[TestCaseExecutionInMergeScenario]:
         test_cases = results_base.keys()
-        test_suite_results: Dict[str, TestCaseResultInMergeScenario] = dict()
+        test_suite_results: List[TestCaseExecutionInMergeScenario] = list()
 
         for test_case in test_cases:
-          test_suite_results[test_case] = TestCaseResultInMergeScenario(
-              results_base.get(test_case, TestCaseResult.NOT_EXECUTABLE),
-              results_left.get(test_case, TestCaseResult.NOT_EXECUTABLE),
-              results_right.get(test_case, TestCaseResult.NOT_EXECUTABLE),
-              results_merge.get(test_case, TestCaseResult.NOT_EXECUTABLE)
-          )
+            test_suite_results[test_case] = TestCaseExecutionInMergeScenario(
+                test_case,
+                results_base.get(test_case, TestCaseResult.NOT_EXECUTABLE),
+                results_left.get(test_case, TestCaseResult.NOT_EXECUTABLE),
+                results_right.get(test_case, TestCaseResult.NOT_EXECUTABLE),
+                results_merge.get(test_case, TestCaseResult.NOT_EXECUTABLE)
+            )
 
         return test_suite_results
