@@ -13,7 +13,6 @@ from nimrod.utils import get_java_files, get_class_files
 from nimrod.tools.java import Java
 from nimrod.tools.maven import Maven
 from nimrod.tools.randoop import Randoop
-from nimrod.tools.safira import Safira
 
 
 class TestRandoop(TestCase):
