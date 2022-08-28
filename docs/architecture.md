@@ -47,6 +47,7 @@ classDiagram
 ## Test Suites Execution
 This module is responsible for executin tests suites for a given merge scenario. Its public API is provided by the class `TestSuitesExecution` which exposes a method, capable of executing test suites in the versions provided.
 ```mermaid
+classDiagram
     direction TD
     class TestSuitesExecution {
         +execute_test_suites(TestSuite[] suite, ScenarioJars jars) TestCaseExecutionInMergeScenario[]
