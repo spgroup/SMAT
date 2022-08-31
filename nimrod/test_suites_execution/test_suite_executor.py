@@ -21,6 +21,7 @@ def get_result_for_test_case(failed_test: str, output: str) -> TestCaseResult:
         return TestCaseResult.NOT_EXECUTABLE
     elif is_failed_caused_by_error(failed_test, output):
         return TestCaseResult.FAIL
+    return TestCaseResult.FAIL
 
 class TestSuiteExecutor:
     def __init__(self, java: Java) -> None:
@@ -77,7 +78,9 @@ class TestSuiteExecutor:
                 results[failed_test] = get_result_for_test_case(failed_test, output)
 
             tests_run = re.search(r'Tests run: (?P<tests_run_count>\d+),', output)
-            test_run_count = int(tests_run.group('tests_run_count'))
+            test_run_count = 0
+            if tests_run:
+                test_run_count = int(tests_run.group('tests_run_count'))
             for i in range(1, test_run_count + 1):
                 test_case_name = 'test{number:0{width}d}'.format(width=len(str(test_run_count)), number=i)
                 if not results.get(test_case_name):

@@ -3,6 +3,8 @@ from nimrod.test_suites_execution.test_case_result import TestCaseResult
 
 
 class TestCaseExecutionInMergeScenario():
+    __test__ = False
+
     def __init__(self, test_suite: TestSuite, name: str, base: TestCaseResult, left: TestCaseResult, right: TestCaseResult, merge: TestCaseResult):
       self.test_suite = test_suite
       self.name = name
