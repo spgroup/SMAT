@@ -14,4 +14,9 @@ class FirstSemanticConflictCriteria(DynamicAnalysisCriteria):
             and test_case_execution.base == TestCaseResult.PASS \
             and bool(xor(test_case_execution.left == TestCaseResult.FAIL, test_case_execution.right == TestCaseResult.FAIL))
 
-        return passes_in_base_and_merge_but_fails_in_a_single_parent
+        fails_in_base_and_merge_but_passes_in_a_single_parent = \
+            test_case_execution.merge == TestCaseResult.FAIL \
+            and test_case_execution.base == TestCaseResult.FAIL \
+            and bool(xor(test_case_execution.left == TestCaseResult.PASS, test_case_execution.right == TestCaseResult.PASS))
+
+        return passes_in_base_and_merge_but_fails_in_a_single_parent or fails_in_base_and_merge_but_passes_in_a_single_parent
