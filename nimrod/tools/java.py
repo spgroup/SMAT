@@ -84,7 +84,6 @@ class Java:
                                            timeout=timeout,
                                            stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            logging.error(e)
             raise e
         except RuntimeError as e:
             logging.error(e)

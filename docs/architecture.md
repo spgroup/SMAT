@@ -43,3 +43,40 @@ classDiagram
 
 ### Future improvements
 - Evaluate the usage of concurrency in `TestSuiteGeneration` to allow faster generation of test suites.
+
+## Test Suites Execution
+This module is responsible for executin tests suites for a given merge scenario. Its public API is provided by the class `TestSuitesExecution` which exposes a method, capable of executing test suites in the versions provided.
+```mermaid
+classDiagram
+    direction TD
+    class TestSuitesExecution {
+        +execute_test_suites(TestSuite[] suite, ScenarioJars jars) TestCaseExecutionInMergeScenario[]
+        +execute_test_suites_with_coverage(TestSuite[] suite, ScenarioJars jars, String[] classes) TestCaseExecutionInMergeScenario[]
+    }
+    TestSuitesExecution --> TestSuiteExecutor
+    TestSuitesExecution ..> TestCaseExecutionInMergeScenario
+
+    class TestSuiteExecutor {
+        +execute_test_suite(TestSuite suite, String jar) Map~TestCaseResult~
+        +execute_test_suite_with_coverage(TestSuite suite, String jar, String[] classes) Map~TestCaseResult~
+    }
+    TestSuiteExecutor ..> TestCaseResult
+
+    class TestCaseResult {
+        <<enumeration>>
+        PASS
+        FAIL
+        FLAKY
+        COMPILATION_ERROR        
+    }
+
+    class TestCaseExecutionInMergeScenario {
+        +TestSuite test_suite
+        +String name
+        +TestCaseResult base
+        +TestCaseResult left
+        +TestCaseResult right
+        +TestCaseResult merge
+    }
+    TestCaseExecutionInMergeScenario --> TestCaseResult
+```
