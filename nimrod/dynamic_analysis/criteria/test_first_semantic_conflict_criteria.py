@@ -26,8 +26,8 @@ class TestFirstSemanticConflictCriteria(TestCase):
             name="test001",
             base=TestCaseResult.FAIL,
             merge=TestCaseResult.FAIL,
-            left=TestCaseResult.PASS,
-            right=TestCaseResult.NOT_EXECUTABLE
+            left=TestCaseResult.NOT_EXECUTABLE,
+            right=TestCaseResult.PASS
         )
 
         self.assertTrue(FirstSemanticConflictCriteria().is_satisfied_by(scenario))
