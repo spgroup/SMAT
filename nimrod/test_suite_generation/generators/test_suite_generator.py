@@ -58,7 +58,7 @@ class TestSuiteGenerator(ABC):
     def _get_test_suite_class_names(self, test_suite_path: str) -> List[str]:
         pass
 
-    def _compile_test_suite(self, input_jar: str, test_suite_path: str, extra_class_path: List[str] = []) -> List[str]:
+    def _compile_test_suite(self, input_jar: str, test_suite_path: str, extra_class_path: List[str] = []) -> str:
         compiled_classes_path = path.join(test_suite_path, 'classes')
         class_path = generate_classpath([input_jar, test_suite_path, compiled_classes_path, JUNIT, HAMCREST] + extra_class_path)
 

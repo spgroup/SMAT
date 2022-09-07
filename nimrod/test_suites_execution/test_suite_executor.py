@@ -47,8 +47,9 @@ class TestSuiteExecutor:
             classpath = generate_classpath([
                 JUNIT,
                 EVOSUITE_RUNTIME,
-                target_jar
-            ] + test_suite.class_path)
+                target_jar,
+                test_suite.class_path
+            ])
 
             params = [
                 '-classpath', classpath,
