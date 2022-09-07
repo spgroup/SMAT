@@ -1,4 +1,6 @@
 from typing import List
+from nimrod.dynamic_analysis import behavior_change
+
 from nimrod.dynamic_analysis.main import DynamicAnalysis
 from nimrod.input_parsing.smat_input import SmatInput
 from nimrod.test_suite_generation.main import TestSuiteGeneration
@@ -16,13 +18,10 @@ class SMAT:
     test_suites = self._generate_test_suites_for_scenario(scenario)
     executions = self._test_suites_execution.execute_test_suites(test_suites, scenario.scenario_jars)
     semantic_conflicts = self._dynamic_analysis.check_for_semantic_conflicts(executions)    
+    behavior_changes = self._dynamic_analysis.check_for_behavior_changes(executions)
   
   def _generate_test_suites_for_scenario(self, scenario: SmatInput) -> List[TestSuite]:
-      suites_left = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.left)
-      suites_right = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.right)
+      suites_left = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.left, True)
+      suites_right = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.right, True)
 
       return suites_left + suites_right
-
-
-
-
