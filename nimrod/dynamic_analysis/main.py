@@ -1,13 +1,13 @@
 from typing import List
 from nimrod.dynamic_analysis.behavior_change import BehaviorChange
 from nimrod.dynamic_analysis.behavior_change_checker import BehaviorChangeChecker
-from nimrod.dynamic_analysis.criteria.dynamic_analysis_criteria import DynamicAnalysisCriteria
+from nimrod.dynamic_analysis.criteria.semantic_conflict_criteria import SemanticConflictCriteria
 from nimrod.dynamic_analysis.semantic_conflict import SemanticConflict
 from nimrod.test_suites_execution.test_case_execution_in_merge_scenario import TestCaseExecutionInMergeScenario
 
 
 class DynamicAnalysis:
-    def __init__(self, semantic_conflict_criterias: List[DynamicAnalysisCriteria], behavior_change_checker: BehaviorChangeChecker):
+    def __init__(self, semantic_conflict_criterias: List[SemanticConflictCriteria], behavior_change_checker: BehaviorChangeChecker):
         self._semantic_conflict_criterias = semantic_conflict_criterias
         self._behavior_change_checker = behavior_change_checker
 
