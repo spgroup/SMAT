@@ -2,7 +2,7 @@ from typing import List
 
 
 class TestSuite:
-    def __init__(self, generator_name: str, path: str, class_path: List[str], test_classes_names: List[str]) -> None:
+    def __init__(self, generator_name: str, path: str, class_path: str, test_classes_names: List[str]) -> None:
         self._generator_name = generator_name
         self._path = path
         self._class_path = class_path
@@ -17,7 +17,7 @@ class TestSuite:
         return self._path
 
     @property
-    def class_path(self) -> List[str]:
+    def class_path(self) -> str:
         return self._class_path
 
     @property

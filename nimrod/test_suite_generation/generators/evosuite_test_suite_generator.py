@@ -63,7 +63,7 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
         return class_names
 
     # Evosuite needs to add its own Runtime in order to compile test suite
-    def _compile_test_suite(self, input_jar: str, output_path: str, extra_class_path: List[str] = []) -> List[str]:
+    def _compile_test_suite(self, input_jar: str, output_path: str, extra_class_path: List[str] = []) -> str:
         return super()._compile_test_suite(input_jar, output_path, [EVOSUITE_RUNTIME] + extra_class_path)
 
     def _create_method_list(self, methods: "List[str]"):
