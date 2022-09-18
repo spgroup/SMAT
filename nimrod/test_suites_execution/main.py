@@ -45,3 +45,7 @@ class TestSuitesExecution:
             )
 
         return test_suite_results
+
+    def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str], watched_classes: List[str]) -> str:
+
+        pass

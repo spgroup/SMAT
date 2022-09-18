@@ -6,6 +6,7 @@ from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.test_suites_execution.test_case_result import TestCaseResult
 from nimrod.tools.bin import EVOSUITE_RUNTIME, JUNIT
 from nimrod.tools.java import TIMEOUT, Java
+from nimrod.tools.jacoco import Jacoco
 from nimrod.utils import generate_classpath
 
 def is_failed_caused_by_compilation_problem(test_case_name: str, failed_test_message: str) -> bool:
@@ -24,8 +25,9 @@ def get_result_for_test_case(failed_test: str, output: str) -> TestCaseResult:
     return TestCaseResult.FAIL
 
 class TestSuiteExecutor:
-    def __init__(self, java: Java) -> None:
+    def __init__(self, java: Java, jacoco: Jacoco) -> None:
         self._java = java
+        self._jacoco = jacoco
 
     def execute_test_suite(self, test_suite: TestSuite, jar: str, number_of_executions: int = 3) -> Dict[str, TestCaseResult]:
         results: Dict[str, TestCaseResult] = dict()
@@ -88,3 +90,9 @@ class TestSuiteExecutor:
                     results[test_case_name] = TestCaseResult.PASS
  
         return results
+
+    def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str], watched_classes: List[str]) -> str:
+        instrumented_jar = f"{target_jar[:-4]}-instrumented.jar"
+        self._jacoco.execInstrumentJar(target_jar, instrumented_jar)
+
+        return ""

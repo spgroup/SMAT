@@ -63,7 +63,8 @@ def main():
   scenarios = parse_scenarios_from_input(config)
 
   for scenario in scenarios:
-    smat.run_tool_for_semmantic_conflict_detection(scenario)
+    if scenario.run_analysis:
+      smat.run_tool_for_semmantic_conflict_detection(scenario)
 
 
 if __name__ == '__main__':
