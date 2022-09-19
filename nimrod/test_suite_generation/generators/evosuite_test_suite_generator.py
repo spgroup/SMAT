@@ -47,10 +47,12 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
         for node in os.listdir(path):
             if os.path.isdir(os.path.join(path, node)):
                 paths += self._get_test_suite_class_paths(os.path.join(path, node))
-            elif node.endswith("_scaffolding.java"):
+            elif node.endswith(".java"):
                 paths.append(os.path.join(path, node))
 
-        return paths
+        # Due to dependencies, we need to compile the Evosuite Scaffold files first.
+        # This is a hack to get the scaffolding files at the begining of the list.
+        return sorted(paths, key=lambda name: -1000 if name.endswith("_scaffolding.java") else 1000)
 
     def _get_test_suite_class_names(self, test_suite_path: str) -> List[str]:
         class_names = []
