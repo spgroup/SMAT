@@ -22,7 +22,7 @@ from nimrod.input_parsing.input_parser import CsvInputParser, JsonInputParser
 def get_test_suite_generators(config: Dict[str, str]) -> List[TestSuiteGenerator]:
   config_generators = config.get(
       'test_suite_generators', ['randoop', 'randoop-modified', 'evosuite', 'evosuite-differential'])
-  generators = list()
+  generators: List[TestSuiteGenerator] = list()
 
   if 'randoop' in config_generators:
     generators.append(RandoopTestSuiteGenerator(Java(), RANDOOP, "RANDOOP"))
@@ -38,14 +38,17 @@ def get_test_suite_generators(config: Dict[str, str]) -> List[TestSuiteGenerator
 
 
 def parse_scenarios_from_input(config: Dict[str, str]) -> List[SmatInput]:
-    if config.get('input_path'):
-        return JsonInputParser().parse_input(config.get('input_path'))
-    elif config.get('path_hash_csv'):
-        logging.WARN(
+    json_input = config.get('input_path', "")
+    csv_input_path = config.get('path_hash_csv', "")
+
+    if json_input != "":
+        return JsonInputParser().parse_input(json_input)
+    elif csv_input_path != "":
+        logging.warning(
             'DEPRECATED: Providing input data with `path_hash_csv` is deprecated and will be removed in future versions of SMAT. Use `input_path` instead.')
-        return CsvInputParser().parse_input(config.get('path_hash_csv'))
+        return CsvInputParser().parse_input(csv_input_path)
     else:
-        logging.FATAL('Non input file provided')
+        logging.fatal('No input file provided')
         exit(1)
 
 
@@ -67,6 +70,8 @@ def main():
   for scenario in scenarios:
     if scenario.run_analysis:
       smat.run_tool_for_semmantic_conflict_detection(scenario)
+    else:
+      logging.info(f"Skipping tool execution for project f{scenario.project_name}")
 
 
 if __name__ == '__main__':
