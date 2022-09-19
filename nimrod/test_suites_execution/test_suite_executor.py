@@ -72,7 +72,7 @@ class TestSuiteExecutor:
         success_match = re.search(r'OK \((?P<number_of_tests>\d+) tests?\)', output)
         if success_match:
             number_of_tests = int(success_match.group('number_of_tests'))
-            for i in range(1, number_of_tests + 1):
+            for i in range(0, number_of_tests):
                 test_case_name = 'test{number:0{width}d}'.format(width=len(str(number_of_tests)), number=i)
                 results[test_case_name] = TestCaseResult.PASS
         else:
@@ -84,7 +84,7 @@ class TestSuiteExecutor:
             test_run_count = 0
             if tests_run:
                 test_run_count = int(tests_run.group('tests_run_count'))
-            for i in range(1, test_run_count + 1):
+            for i in range(0, test_run_count):
                 test_case_name = 'test{number:0{width}d}'.format(width=len(str(test_run_count)), number=i)
                 if not results.get(test_case_name):
                     results[test_case_name] = TestCaseResult.PASS

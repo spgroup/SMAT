@@ -15,12 +15,13 @@ from nimrod.test_suite_generation.generators.evosuite_test_suite_generator impor
 from nimrod.test_suites_execution.main import TestSuitesExecution, TestSuiteExecutor
 from nimrod.tools.bin import MOD_RANDOOP, RANDOOP
 from nimrod.tools.java import Java
+from nimrod.tools.jacoco import Jacoco
 from nimrod.input_parsing.input_parser import CsvInputParser, JsonInputParser
 
 
 def get_test_suite_generators(config: Dict[str, str]) -> List[TestSuiteGenerator]:
   config_generators = config.get(
-      'test_suite_generators', 'randoop,randoop-modified,evosuite,evosuite-differential')
+      'test_suite_generators', ['randoop', 'randoop-modified', 'evosuite', 'evosuite-differential'])
   generators = list()
 
   if 'randoop' in config_generators:
@@ -53,7 +54,8 @@ def main():
   config = get_config()
   test_suite_generators = get_test_suite_generators(config)
   test_suite_generation = TestSuiteGeneration(test_suite_generators)
-  test_suites_execution = TestSuitesExecution(TestSuiteExecutor(Java()))
+  test_suites_execution = TestSuitesExecution(
+      TestSuiteExecutor(Java(), Jacoco(Java())))
   dynamic_analysis = DynamicAnalysis([
       FirstSemanticConflictCriteria(),
       SecondSemanticConflictCriteria()
