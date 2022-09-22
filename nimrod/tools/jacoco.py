@@ -88,7 +88,7 @@ class Jacoco:
     # caminhoJacocoExec = local do arquivo jacocoExec
     # classFiles = local do arquivo class da classe alvo dos testes.
     # localHtmlGerado = arquivo para criacao do report html.
-    def generateReportHtml(self, jacocoExecDir, classFiles, targetClass):
+    def generateReportHtml(self, jacocoExecDir, classFiles, targetClass = None):
         novoClassFile = classFiles
         if type(classFiles) == list: # tratamento para caso receber uma lista de jars
             classFiles = self.adjustOnListOfJars(classFiles, targetClass)

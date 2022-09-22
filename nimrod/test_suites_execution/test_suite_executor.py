@@ -6,7 +6,7 @@ from typing import Dict, List
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.test_suites_execution.test_case_result import TestCaseResult
 from nimrod.tests.utils import get_base_output_path
-from nimrod.tools.bin import EVOSUITE_RUNTIME, JACOCOAGENT, JUNIT
+from nimrod.tools.bin import EVOSUITE_RUNTIME, JACOCOAGENT, JUNIT, JUNIT_5
 from nimrod.tools.java import TIMEOUT, Java
 from nimrod.tools.jacoco import Jacoco
 from nimrod.utils import generate_classpath
@@ -31,7 +31,7 @@ class TestSuiteExecutor:
         self._java = java
         self._jacoco = jacoco
 
-    def execute_test_suite(self, test_suite: TestSuite, jar: str, number_of_executions: int = 3) -> Dict[str, TestCaseResult]:
+    def execute_test_suite(self, test_suite: TestSuite, jar: str, number_of_executions: int = 1) -> Dict[str, TestCaseResult]:
         results: Dict[str, TestCaseResult] = dict()
 
         for test_class in test_suite.test_classes_names:
@@ -52,7 +52,6 @@ class TestSuiteExecutor:
             classpath = generate_classpath([
                 JUNIT,
                 EVOSUITE_RUNTIME,
-                JACOCOAGENT,
                 target_jar,
                 test_suite.class_path
             ])
@@ -93,7 +92,7 @@ class TestSuiteExecutor:
  
         return results
 
-    def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str], watched_classes: List[str]) -> str:
+    def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str]) -> str:
         jars_directory = path.join(get_base_output_path(), "instrumented_jars")
         jar_file_name = target_jar.split('/')[-1]
         instrumented_jar_path = path.join(jars_directory, jar_file_name)
@@ -106,9 +105,27 @@ class TestSuiteExecutor:
             logging.debug(f'Successfully instrumented jar {target_jar}')
 
         logging.debug('Starting execution of test suite for coverage collection')
-        self._execute_junit(test_suite, instrumented_jar_path, ' '.join(test_cases))
+        self._execute_junit_5(test_suite, instrumented_jar_path, [f"-m={x}" for x in test_cases])
         logging.debug('Finished execution of test suite for coverage collection')
 
         self._jacoco.generateReportHtml(test_suite.path, target_jar)
 
-        return path.join(test_suite, 'report')
+        return path.join(test_suite.path, 'report')
+
+    # JUnit5 allows to easily execute only a few test cases instead of only executing the entire suite as it's done in JUnit4.
+    def _execute_junit_5(self, test_suite: TestSuite, target_jar: str, test_targets: List[str], extra_params: List[str] = []) -> Dict[str, TestCaseResult]:
+        try:
+            classpath = generate_classpath([
+                JUNIT_5,
+                EVOSUITE_RUNTIME,
+                JACOCOAGENT,
+                target_jar,
+                test_suite.class_path
+            ])
+
+            params: List[str] = ['-classpath', classpath, ] + extra_params + \
+                ['org.junit.platform.console.ConsoleLauncher'] + test_targets
+
+            return self._java.exec_java(test_suite.path, self._java.get_env(), TIMEOUT, *params)
+        except subprocess.CalledProcessError as error:
+            return None
