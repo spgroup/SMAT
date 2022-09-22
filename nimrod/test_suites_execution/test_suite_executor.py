@@ -31,7 +31,7 @@ class TestSuiteExecutor:
         self._java = java
         self._jacoco = jacoco
 
-    def execute_test_suite(self, test_suite: TestSuite, jar: str, number_of_executions: int = 1) -> Dict[str, TestCaseResult]:
+    def execute_test_suite(self, test_suite: TestSuite, jar: str, number_of_executions: int = 3) -> Dict[str, TestCaseResult]:
         results: Dict[str, TestCaseResult] = dict()
 
         for test_class in test_suite.test_classes_names:
