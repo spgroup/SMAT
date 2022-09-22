@@ -27,9 +27,9 @@ class SemanticConflictsOutputGenerator(OutputGenerator[List[SemanticConflictsOut
         for semantic_conflict in context.semantic_conflicts:
             # We need to detect which targets from the input were exercised in this conflict.
             coverage_report_root = self._test_suites_execution.execute_test_suite_with_coverage(
-                test_suite=semantic_conflict._detected_in.test_suite,
+                test_suite=semantic_conflict.detected_in.test_suite,
                 target_jar=context.scenario.scenario_jars.merge,
-                test_cases=[semantic_conflict._detected_in.name]
+                test_cases=[semantic_conflict.detected_in.name]
             )
 
             exercised_targets = self._extract_exercised_targets_from_coverage_report(
@@ -41,14 +41,14 @@ class SemanticConflictsOutputGenerator(OutputGenerator[List[SemanticConflictsOut
                 "project_name": context.scenario.project_name,
                 "scenario_commits": context.scenario.scenario_commits.__dict__,
                 "criteria": semantic_conflict._satisfying_criteria.__class__.__name__,
-                "test_case_name": semantic_conflict._detected_in.name,
+                "test_case_name": semantic_conflict.detected_in.name,
                 "test_case_results": {
-                    "base": semantic_conflict._detected_in.base,
-                    "left": semantic_conflict._detected_in.left,
-                    "right": semantic_conflict._detected_in.right,
-                    "merge": semantic_conflict._detected_in.merge
+                    "base": semantic_conflict.detected_in.base,
+                    "left": semantic_conflict.detected_in.left,
+                    "right": semantic_conflict.detected_in.right,
+                    "merge": semantic_conflict.detected_in.merge
                 },
-                "test_suite_path": semantic_conflict._detected_in.test_suite.path,
+                "test_suite_path": semantic_conflict.detected_in.test_suite.path,
                 "scenario_targets": context.scenario.targets,
                 "exercised_targets": exercised_targets
             })

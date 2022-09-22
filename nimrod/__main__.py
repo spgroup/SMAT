@@ -5,6 +5,7 @@ from nimrod.dynamic_analysis.criteria.first_semantic_conflict_criteria import Fi
 from nimrod.dynamic_analysis.criteria.second_semantic_conflict_criteria import SecondSemanticConflictCriteria
 from nimrod.dynamic_analysis.main import DynamicAnalysis
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
+from nimrod.reports_generation.behavior_change_output_generator import BehaviorChangeOutputGenerator
 from nimrod.reports_generation.semantic_conflicts_output_generator import SemanticConflictsOutputGenerator
 from nimrod.reports_generation.test_suites_output_generator import TestSuitesOutputGenerator
 from nimrod.smat import SMAT
@@ -67,7 +68,8 @@ def main():
   ], BehaviorChangeChecker())
   output_generators = [
     SemanticConflictsOutputGenerator(test_suites_execution),
-    TestSuitesOutputGenerator()
+    TestSuitesOutputGenerator(),
+    BehaviorChangeOutputGenerator()
   ]
 
   smat = SMAT(test_suite_generation, test_suites_execution, dynamic_analysis, output_generators)
