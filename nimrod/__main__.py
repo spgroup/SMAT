@@ -4,7 +4,7 @@ from nimrod.dynamic_analysis.behavior_change_checker import BehaviorChangeChecke
 from nimrod.dynamic_analysis.criteria.first_semantic_conflict_criteria import FirstSemanticConflictCriteria
 from nimrod.dynamic_analysis.criteria.second_semantic_conflict_criteria import SecondSemanticConflictCriteria
 from nimrod.dynamic_analysis.main import DynamicAnalysis
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.reports_generation.semantic_conflicts_output_generator import SemanticConflictsOutputGenerator
 from nimrod.smat import SMAT
 from nimrod.test_suite_generation.main import TestSuiteGeneration
@@ -38,7 +38,7 @@ def get_test_suite_generators(config: Dict[str, str]) -> List[TestSuiteGenerator
   return generators
 
 
-def parse_scenarios_from_input(config: Dict[str, str]) -> List[SmatInput]:
+def parse_scenarios_from_input(config: Dict[str, str]) -> List[MergeScenarioUnderAnalysis]:
     json_input = config.get('input_path', "")
     csv_input_path = config.get('path_hash_csv', "")
 

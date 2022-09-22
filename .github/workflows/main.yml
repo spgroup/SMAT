@@ -28,7 +28,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Lint with mypy
-      run: mypy nimrod/test_suite_generation/ nimrod/test_suites_execution/ nimrod/dynamic_analysis/ nimrod/reports_generation nimrod/__main__.py nimrod/smat.py --ignore-missing-imports
+      run: mypy nimrod/test_suite_generation/ nimrod/test_suites_execution/ nimrod/dynamic_analysis/ nimrod/core nimrod/reports_generation nimrod/__main__.py nimrod/smat.py --ignore-missing-imports
     - name: Setup Java
       uses: actions/setup-java@v2
       with:

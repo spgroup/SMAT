@@ -1,7 +1,7 @@
 from typing import List
 
 from nimrod.dynamic_analysis.main import DynamicAnalysis
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.reports_generation.output_generator import OutputGenerator, OutputGeneratorContext
 from nimrod.test_suite_generation.main import TestSuiteGeneration
 from nimrod.test_suite_generation.test_suite import TestSuite
@@ -15,7 +15,7 @@ class SMAT:
     self._dynamic_analysis = dynamic_analisys
     self._output_generators = output_generators
 
-  def run_tool_for_semmantic_conflict_detection(self, scenario: SmatInput) -> None:
+  def run_tool_for_semmantic_conflict_detection(self, scenario: MergeScenarioUnderAnalysis) -> None:
     test_suites = self._generate_test_suites_for_scenario(scenario)
     executions = self._test_suites_execution.execute_test_suites(test_suites, scenario.scenario_jars)
     semantic_conflicts = self._dynamic_analysis.check_for_semantic_conflicts(executions)    
@@ -30,7 +30,7 @@ class SMAT:
           behavior_changes=behavior_changes
       ))
   
-  def _generate_test_suites_for_scenario(self, scenario: SmatInput) -> List[TestSuite]:
+  def _generate_test_suites_for_scenario(self, scenario: MergeScenarioUnderAnalysis) -> List[TestSuite]:
       suites_left = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.left, True)
       suites_right = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.right, True)
 

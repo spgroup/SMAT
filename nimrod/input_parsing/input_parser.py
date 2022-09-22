@@ -3,18 +3,18 @@ import json
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from nimrod.input_parsing.smat_input import ScenarioInformation, SmatInput
+from nimrod.core.merge_scenario_under_analysis import ScenarioInformation, MergeScenarioUnderAnalysis
 
 # This interface is responsible for parsing user input from a file into SMAT internal model.
 # If you wish to implement a new parser, just create a new implementation of it.
 class InputParser(ABC):
     @abstractmethod
-    def parse_input(self, file_path: str) -> "List[SmatInput]":
+    def parse_input(self, file_path: str) -> "List[MergeScenarioUnderAnalysis]":
         pass
 
 
 class JsonInputParser(InputParser):
-    def parse_input(self, file_path: str) -> "List[SmatInput]":
+    def parse_input(self, file_path: str) -> "List[MergeScenarioUnderAnalysis]":
         json_data: List[Dict[str, Any]] = []
         with open(file_path, 'r') as json_file:
             json_data = json.load(json_file)
@@ -25,7 +25,7 @@ class JsonInputParser(InputParser):
         scenario_commits_json: Any = scenario.get('scenarioCommits')
         scenario_jars_json: Any = scenario.get('scenarioJars')
 
-        return SmatInput(
+        return MergeScenarioUnderAnalysis(
             project_name=str(scenario.get('projectName')),
             run_analysis=bool(scenario.get('runAnalysis')),
             scenario_commits=ScenarioInformation(
@@ -46,13 +46,13 @@ class JsonInputParser(InputParser):
 
 
 class CsvInputParser(InputParser):
-    def parse_input(self, file_path: str) -> "List[SmatInput]":
+    def parse_input(self, file_path: str) -> "List[MergeScenarioUnderAnalysis]":
         with open(file_path, 'r') as csv_file:
             csv_data = csv.reader(csv_file, delimiter=',')
             return [self._convert_to_internal_representation(scenario) for scenario in csv_data]
 
     def _convert_to_internal_representation(self, row: "List[str]"):
-        return SmatInput(
+        return MergeScenarioUnderAnalysis(
             project_name=row[0],
             run_analysis=row[1] == "true",
             scenario_commits=ScenarioInformation(

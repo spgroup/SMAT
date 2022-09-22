@@ -1,6 +1,6 @@
 import os
 from typing import Dict, List
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
@@ -23,7 +23,7 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return self._randoop_version
 
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput, use_determinism: bool) -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: MergeScenarioUnderAnalysis, use_determinism: bool) -> None:
         params = [
             '-classpath', generate_classpath([input_jar, self._randoop_jar]),
             'randoop.main.Main',

@@ -2,7 +2,7 @@ from typing import List
 
 from nimrod.dynamic_analysis.behavior_change import BehaviorChange
 from nimrod.dynamic_analysis.semantic_conflict import SemanticConflict
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.test_suites_execution.test_case_execution_in_merge_scenario import \
     TestCaseExecutionInMergeScenario
@@ -10,7 +10,7 @@ from nimrod.test_suites_execution.test_case_execution_in_merge_scenario import \
 
 class OutputGeneratorContext:
     def __init__(self,
-                 scenario: SmatInput,
+                 scenario: MergeScenarioUnderAnalysis,
                  test_suites: List[TestSuite],
                  test_case_executions: List[TestCaseExecutionInMergeScenario],
                  semantic_conflicts: List[SemanticConflict],
@@ -22,7 +22,7 @@ class OutputGeneratorContext:
         self._behavior_changes = behavior_changes
 
     @property
-    def scenario(self) -> SmatInput:
+    def scenario(self) -> MergeScenarioUnderAnalysis:
         return self._scenario
 
     @property
