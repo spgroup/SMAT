@@ -1,7 +1,5 @@
 from typing import Dict, List, TypedDict
-from nimrod.dynamic_analysis.semantic_conflict import SemanticConflict
-from nimrod.input_parsing.smat_input import SmatInput
-from nimrod.reports_generation.output_generator import OutputGenerator
+from nimrod.reports_generation.output_generator import OutputGenerator, OutputGeneratorContext
 from nimrod.test_suites_execution.main import TestSuitesExecution
 from os import path
 from bs4 import BeautifulSoup
@@ -23,30 +21,25 @@ class SemanticConflictsOutputGenerator(OutputGenerator[List[SemanticConflictsOut
         super().__init__("semantic_conflicts")
         self._test_suites_execution = test_suites_execution
 
-    def _generate_report_data(self, scenario: SmatInput, semantic_conflicts: List[SemanticConflict]) -> List[SemanticConflictsOutput]:
+    def _generate_report_data(self, context: OutputGeneratorContext) -> List[SemanticConflictsOutput]:
         report_data: List[SemanticConflictsOutput] = list()
 
-        for semantic_conflict in semantic_conflicts:
+        for semantic_conflict in context.semantic_conflicts:
             # We need to detect which targets from the input were exercised in this conflict.
             coverage_report_root = self._test_suites_execution.execute_test_suite_with_coverage(
                 test_suite=semantic_conflict._detected_in.test_suite,
-                target_jar=scenario.scenario_jars.merge,
+                target_jar=context.scenario.scenario_jars.merge,
                 test_cases=[semantic_conflict._detected_in.name]
             )
 
             exercised_targets = self._extract_exercised_targets_from_coverage_report(
                 coverage_report_root=coverage_report_root,
-                targets=scenario.targets
+                targets=context.scenario.targets
             )
 
             report_data.append({
-                "project_name": scenario.project_name,
-                "scenario_commits": {
-                    "base": scenario.scenario_commits.base,
-                    "left": scenario.scenario_commits.left,
-                    "right": scenario.scenario_commits.right,
-                    "merge": scenario.scenario_commits.merge
-                },
+                "project_name": context.scenario.project_name,
+                "scenario_commits": context.scenario.scenario_commits.__dict__,
                 "criteria": semantic_conflict._satisfying_criteria.__class__.__name__,
                 "test_case_name": semantic_conflict._detected_in.name,
                 "test_case_results": {
@@ -56,7 +49,7 @@ class SemanticConflictsOutputGenerator(OutputGenerator[List[SemanticConflictsOut
                     "merge": semantic_conflict._detected_in.merge
                 },
                 "test_suite_path": semantic_conflict._detected_in.test_suite.path,
-                "scenario_targets": scenario.targets,
+                "scenario_targets": context.scenario.targets,
                 "exercised_targets": exercised_targets
             })
 
