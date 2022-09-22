@@ -1,9 +1,11 @@
 import logging
 import re
 import subprocess
+from os import path
 from typing import Dict, List
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.test_suites_execution.test_case_result import TestCaseResult
+from nimrod.tests.utils import get_base_output_path
 from nimrod.tools.bin import EVOSUITE_RUNTIME, JUNIT
 from nimrod.tools.java import TIMEOUT, Java
 from nimrod.tools.jacoco import Jacoco
@@ -92,7 +94,11 @@ class TestSuiteExecutor:
         return results
 
     def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str], watched_classes: List[str]) -> str:
-        instrumented_jar = f"{target_jar[:-4]}-instrumented.jar"
-        self._jacoco.execInstrumentJar(target_jar, instrumented_jar)
+        instrumented_jars_path = path.join(
+            get_base_output_path(), "instrumented_jars")
 
-        return ""
+        logging.debug(f'Starting instrumentation of jar {target_jar}')
+        self._jacoco.execInstrumentJar(target_jar, instrumented_jars_path)
+        logging.debug(f'Successfully instrumented jar {target_jar}')
+
+        return path.join(instrumented_jars_path, target_jar.split('/')[-1])

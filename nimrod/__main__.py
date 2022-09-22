@@ -5,6 +5,7 @@ from nimrod.dynamic_analysis.criteria.first_semantic_conflict_criteria import Fi
 from nimrod.dynamic_analysis.criteria.second_semantic_conflict_criteria import SecondSemanticConflictCriteria
 from nimrod.dynamic_analysis.main import DynamicAnalysis
 from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.reports_generation.semantic_conflicts_output_generator import SemanticConflictsOutputGenerator
 from nimrod.smat import SMAT
 from nimrod.test_suite_generation.main import TestSuiteGeneration
 from nimrod.tests.utils import setup_logging, get_config
@@ -63,8 +64,11 @@ def main():
       FirstSemanticConflictCriteria(),
       SecondSemanticConflictCriteria()
   ], BehaviorChangeChecker())
+  output_generators = [
+    SemanticConflictsOutputGenerator(test_suites_execution)
+  ]
 
-  smat = SMAT(test_suite_generation, test_suites_execution, dynamic_analysis)
+  smat = SMAT(test_suite_generation, test_suites_execution, dynamic_analysis, output_generators)
   scenarios = parse_scenarios_from_input(config)
 
   for scenario in scenarios:
