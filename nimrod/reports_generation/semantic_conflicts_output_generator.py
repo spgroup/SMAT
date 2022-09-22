@@ -16,12 +16,12 @@ class SemanticConflictsOutput(TypedDict):
     exercised_targets: Dict[str, List[str]]
 
 
-class SemanticConflictsOutputGenerator(OutputGenerator):
+class SemanticConflictsOutputGenerator(OutputGenerator[List[SemanticConflictsOutput]]):
     def __init__(self, test_suites_execution: TestSuitesExecution) -> None:
         super().__init__("semantic_conflicts")
         self._test_suites_execution = test_suites_execution
 
-    def _generate_report_data(self, scenario: SmatInput, semantic_conflicts: List[SemanticConflict]):
+    def _generate_report_data(self, scenario: SmatInput, semantic_conflicts: List[SemanticConflict]) -> List[SemanticConflictsOutput]:
         report_data: List[SemanticConflictsOutput] = list()
 
         for semantic_conflict in semantic_conflicts:
