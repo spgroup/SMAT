@@ -17,7 +17,7 @@ class SemanticConflictsOutput:
 
 class SemanticConflictsOutputGenerator(OutputGenerator):
     def __init__(self, test_suites_execution: TestSuitesExecution) -> None:
-        super().__init__("semantic_conflicts.csv")
+        super().__init__("semantic_conflicts")
         self._test_suites_execution = test_suites_execution
 
     def _generate_report_data(self, scenario: SmatInput, semantic_conflicts: List[SemanticConflict]):

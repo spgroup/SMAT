@@ -25,4 +25,4 @@ class OutputGenerator(ABC):
     data = self._generate_report_data(scenario, semantic_conflicts)
 
     with open(file_path, "w") as write:
-        json.dump(data.__dict__, write)
+        json.dump(data, write)
