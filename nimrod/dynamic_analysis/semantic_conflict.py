@@ -7,3 +7,11 @@ class SemanticConflict:
     def __init__(self, satisfying_criteria: SemanticConflictCriteria, detected_in: TestCaseExecutionInMergeScenario) -> None:
         self._satisfying_criteria = satisfying_criteria
         self._detected_in = detected_in
+
+    @property
+    def satisfying_criteria(self) -> SemanticConflictCriteria:
+        return self._satisfying_criteria
+
+    @property
+    def detected_in(self) -> TestCaseExecutionInMergeScenario:
+        return self._detected_in

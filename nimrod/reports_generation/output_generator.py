@@ -1,5 +1,6 @@
 import json
 from abc import ABC, abstractmethod
+import logging
 from os import makedirs, path
 from typing import TypeVar, Generic
 
@@ -22,8 +23,13 @@ class OutputGenerator(ABC, Generic[T]):
         pass
 
     def write_report(self, context: OutputGeneratorContext) -> None:
+        logging.info(f"Starting generation of {self._report_name} report")
         file_path = path.join(self.REPORTS_DIRECTORY, self._report_name)
+
+        logging.info(f"Starting data processing of {self._report_name} report")
         data = self._generate_report_data(context)
+        logging.info(f"Finished data processing of {self._report_name} report")
 
         with open(file_path, "w") as write:
             json.dump(data, write)
+        logging.info(f"Finished generation of {self._report_name} report")
