@@ -113,7 +113,7 @@ class TestSuiteExecutor:
         return path.join(test_suite.path, 'report')
 
     # JUnit5 allows to easily execute only a few test cases instead of only executing the entire suite as it's done in JUnit4.
-    def _execute_junit_5(self, test_suite: TestSuite, target_jar: str, test_targets: List[str], extra_params: List[str] = []) -> Dict[str, TestCaseResult]:
+    def _execute_junit_5(self, test_suite: TestSuite, target_jar: str, test_targets: List[str], extra_params: List[str] = []) -> None:
         try:
             classpath = generate_classpath([
                 JUNIT_5,
