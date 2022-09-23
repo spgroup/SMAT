@@ -116,12 +116,10 @@ classDiagram
     class BehaviorChangesOutput {
         +str project_name
         +Dict[str, str] scenario_commits
-        +str criteria
         +str test_case_name
         +Dict[str, str] test_case_results
         +str test_suite_path
-        +Dict[str, List[str]] scenario_targets
-        +Dict[str, List[str]] exercised_targets
+        +Tuple[str, str] between
     }
 
     class TestSuitesOutputGenerator~TestSuitesOutput~ {
@@ -131,13 +129,10 @@ classDiagram
     OutputGenerator~T~ <|-- TestSuitesOutputGenerator~TestSuitesOutput~
     class TestSuitesOutput {
         +str project_name
-        +Dict[str, str] scenario_commits
-        +str criteria
-        +str test_case_name
-        +Dict[str, str] test_case_results
-        +str test_suite_path
-        +Dict[str, List[str]] scenario_targets
-        +Dict[str, List[str]] exercised_targets
+        +str generator_name
+        +str path
+        +bool detected_semantic_conflicts
+        +bool detected_behavior_changes_between_pairs
     }
 ```
 
