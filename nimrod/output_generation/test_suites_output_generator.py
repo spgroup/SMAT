@@ -1,7 +1,7 @@
 from typing import List, TypedDict
 from nimrod.dynamic_analysis.behavior_change import BehaviorChange
 from nimrod.dynamic_analysis.semantic_conflict import SemanticConflict
-from nimrod.reports_generation.output_generator import OutputGenerator, OutputGeneratorContext
+from nimrod.output_generation.output_generator import OutputGenerator, OutputGeneratorContext
 from nimrod.test_suite_generation.test_suite import TestSuite
 
 

@@ -1,5 +1,5 @@
 from typing import Dict, List, TypedDict
-from nimrod.reports_generation.output_generator import OutputGenerator, OutputGeneratorContext
+from nimrod.output_generation.output_generator import OutputGenerator, OutputGeneratorContext
 from nimrod.test_suites_execution.main import TestSuitesExecution
 from os import path
 from bs4 import BeautifulSoup

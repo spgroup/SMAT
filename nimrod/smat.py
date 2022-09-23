@@ -2,7 +2,7 @@ from typing import List
 
 from nimrod.dynamic_analysis.main import DynamicAnalysis
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
-from nimrod.reports_generation.output_generator import OutputGenerator, OutputGeneratorContext
+from nimrod.output_generation.output_generator import OutputGenerator, OutputGeneratorContext
 from nimrod.test_suite_generation.main import TestSuiteGeneration
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.test_suites_execution.main import TestSuitesExecution

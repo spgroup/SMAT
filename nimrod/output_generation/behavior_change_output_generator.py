@@ -1,5 +1,5 @@
 from typing import Dict, List, Tuple, TypedDict
-from nimrod.reports_generation.output_generator import OutputGenerator, OutputGeneratorContext
+from nimrod.output_generation.output_generator import OutputGenerator, OutputGeneratorContext
 
 
 class BehaviorChangeOutput(TypedDict):

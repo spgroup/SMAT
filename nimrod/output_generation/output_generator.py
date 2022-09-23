@@ -4,7 +4,7 @@ import logging
 from os import makedirs, path
 from typing import TypeVar, Generic
 
-from nimrod.reports_generation.output_generator_context import OutputGeneratorContext
+from nimrod.output_generation.output_generator_context import OutputGeneratorContext
 from nimrod.tests.utils import get_base_output_path
 
 T = TypeVar("T")
