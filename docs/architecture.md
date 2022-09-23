@@ -153,4 +153,4 @@ classDiagram
         +BehaviorChange[] behavior_changes
     }
 ```
-
+- In order to generate Semantic Conflicts reports, it was required to re-execute some of the test cases using coverage collection. Thus, in  `SemanticConflictOutputGenerator` there's a dependency with the `TestSuitesExecution` module. This coupling has been discussed to be acceptable within the project.
