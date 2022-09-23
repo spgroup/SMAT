@@ -6,6 +6,7 @@ from nimrod.dynamic_analysis.criteria.second_semantic_conflict_criteria import S
 from nimrod.dynamic_analysis.main import DynamicAnalysis
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.output_generation.behavior_change_output_generator import BehaviorChangeOutputGenerator
+from nimrod.output_generation.output_generator import OutputGenerator
 from nimrod.output_generation.semantic_conflicts_output_generator import SemanticConflictsOutputGenerator
 from nimrod.output_generation.test_suites_output_generator import TestSuitesOutputGenerator
 from nimrod.smat import SMAT
@@ -40,6 +41,22 @@ def get_test_suite_generators(config: Dict[str, str]) -> List[TestSuiteGenerator
   return generators
 
 
+def get_output_generators(config: Dict[str, str]) -> List[OutputGenerator]:
+  config_generators = config.get(
+      'output_generators', ['behavior_changes', 'semantic_conflicts', 'test_suites'])
+  generators: List[OutputGenerator] = list()
+
+  if 'behavior_changes' in config_generators:
+    generators.append(BehaviorChangeOutputGenerator())
+  if 'semantic_conflicts' in config_generators:
+    generators.append(SemanticConflictsOutputGenerator(
+        TestSuitesExecution(TestSuiteExecutor(Java(), Jacoco(Java())))))
+  if 'test_suites' in config_generators:
+    generators.append(TestSuitesOutputGenerator())
+
+  return generators
+
+
 def parse_scenarios_from_input(config: Dict[str, str]) -> List[MergeScenarioUnderAnalysis]:
     json_input = config.get('input_path', "")
     csv_input_path = config.get('path_hash_csv', "")
@@ -66,11 +83,7 @@ def main():
       FirstSemanticConflictCriteria(),
       SecondSemanticConflictCriteria()
   ], BehaviorChangeChecker())
-  output_generators = [
-    SemanticConflictsOutputGenerator(test_suites_execution),
-    TestSuitesOutputGenerator(),
-    BehaviorChangeOutputGenerator()
-  ]
+  output_generators = get_output_generators(config)
 
   smat = SMAT(test_suite_generation, test_suites_execution, dynamic_analysis, output_generators)
   scenarios = parse_scenarios_from_input(config)
