@@ -3,7 +3,7 @@ import os
 from collections import namedtuple
 
 from nimrod.input_parsing.input_parser import CsvInputParser, JsonInputParser
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.proj.project_dependencies import Project_dependecies
 from nimrod.project_info.git_project import GitProject
 from nimrod.project_info.merge_scenario import MergeScenario
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     config = get_config()
     setup_logging()
 
-    parsed_input: "list[SmatInput]" = None
+    parsed_input: "list[MergeScenarioUnderAnalysis]" = None
     if config.get('input_path'):
         parsed_input = JsonInputParser().parse_input(config.get('input_path'))
     elif config.get('path_hash_csv'):

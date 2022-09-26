@@ -3,7 +3,7 @@ import os
 from struct import pack
 
 from bs4 import BeautifulSoup
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 from nimrod.setup_tools.setup_tool import Setup_tool
 from nimrod.tools.bin import JACOCOAGENT
@@ -12,7 +12,7 @@ from nimrod.tools.suite_generator import Suite
 
 
 class Coverage_Report(Setup_tool):
-    def generate_report(self, evo, scenario, commitMerge, toolOneSuites, toolTwoSuites, projectName, jar_type=None, input: SmatInput = None):
+    def generate_report(self, evo, scenario, commitMerge, toolOneSuites, toolTwoSuites, projectName, jar_type=None, input: MergeScenarioUnderAnalysis = None):
         listaPacoteMetodoClasse = self._decomposeTarget(input.targets)
         listaPartesBasicasReport = [
             "target_commit", "test_suite_commit", "projeto"]

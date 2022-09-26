@@ -1,7 +1,7 @@
 import logging
 import os
 from typing import Dict, List
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
@@ -15,7 +15,7 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
     def get_generator_tool_name(self) -> str:
         return "EVOSUITE"
 
-    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: SmatInput, use_determinism: bool) -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, output_path: str, scenario: MergeScenarioUnderAnalysis, use_determinism: bool) -> None:
         for class_name, methods in scenario.targets.items():
           logging.debug(f"Starting generation for class {class_name}")
           params = [
@@ -47,10 +47,12 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
         for node in os.listdir(path):
             if os.path.isdir(os.path.join(path, node)):
                 paths += self._get_test_suite_class_paths(os.path.join(path, node))
-            elif node.endswith("_scaffolding.java"):
+            elif node.endswith(".java"):
                 paths.append(os.path.join(path, node))
 
-        return paths
+        # Due to dependencies, we need to compile the Evosuite Scaffold files first.
+        # This is a hack to get the scaffolding files at the begining of the list.
+        return sorted(paths, key=lambda name: -1000 if name.endswith("_scaffolding.java") else 1000)
 
     def _get_test_suite_class_names(self, test_suite_path: str) -> List[str]:
         class_names = []

@@ -4,7 +4,7 @@ from os import makedirs, path
 from time import time
 from typing import Dict, List
 
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.tests.utils import get_base_output_path
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.tools.bin import HAMCREST, JUNIT
@@ -17,7 +17,7 @@ class TestSuiteGenerator(ABC):
     def __init__(self, java: Java) -> None:
         self._java = java
 
-    def generate_and_compile_test_suite(self, scenario: SmatInput, input_jar: str, use_determinism: bool) -> TestSuite:
+    def generate_and_compile_test_suite(self, scenario: MergeScenarioUnderAnalysis, input_jar: str, use_determinism: bool) -> TestSuite:
         if use_determinism:
             logging.debug('Using deterministic test suite generation')
             
@@ -47,7 +47,7 @@ class TestSuiteGenerator(ABC):
         pass
 
     @abstractmethod
-    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, scenario: SmatInput, use_determinism: bool) -> None:
+    def _execute_tool_for_tests_generation(self, input_jar: str, test_suite_path: str, scenario: MergeScenarioUnderAnalysis, use_determinism: bool) -> None:
         pass
 
     @abstractmethod

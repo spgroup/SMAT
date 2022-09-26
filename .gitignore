@@ -118,3 +118,5 @@ nimrod/tests/env-config.json
 
 #Microsoft
 .vscode/
+
+output-test-dest/

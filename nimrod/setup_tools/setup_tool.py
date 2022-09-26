@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import logging
 import os
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.setup_tools.behaviour_check import Behaviour_check
@@ -36,7 +36,7 @@ class Setup_tool(ABC):
         except:
             print("Some project versions could not be evaluated")
 
-    def run_tool_for_semantic_conflict_detection(self, evo, scenario: MergeScenario, tool: str, input: SmatInput):
+    def run_tool_for_semantic_conflict_detection(self, evo, scenario: MergeScenario, tool: str, input: MergeScenarioUnderAnalysis):
         conflict_info = []
 
         jarBase = input.scenario_jars.base
@@ -76,7 +76,7 @@ class Setup_tool(ABC):
 
         return conflict_info
 
-    def run_tool_for_behaviour_change_detection(self, evo, scenario, jarCommitOne, jarCommitTwo, commitOne, commitTwo, tool, input: SmatInput = None):
+    def run_tool_for_behaviour_change_detection(self, evo, scenario, jarCommitOne, jarCommitTwo, commitOne, commitTwo, tool, input: MergeScenarioUnderAnalysis = None):
         conflict_info = []
         try:
             self.setup_for_partial_merge_scenario(evo, scenario, jarCommitOne, jarCommitTwo)
@@ -91,7 +91,7 @@ class Setup_tool(ABC):
         return conflict_info
 
     def generate_and_run_test_suites(self, evo, scenario: MergeScenario, commitBaseSha, commitParentTestSuite, commitOtherParent,
-                                     commitMergeSha, conflict_info, tool, input: SmatInput = None):
+                                     commitMergeSha, conflict_info, tool, input: MergeScenarioUnderAnalysis = None):
         path_suite = []
         test_result_base = set()
         test_result_parent_test_suite = set()
@@ -120,7 +120,7 @@ class Setup_tool(ABC):
 
         return path_suite, test_result_base, test_result_parent_test_suite, test_result_other_parent, test_result_merge
 
-    def generate_and_run_test_suites_for_commit_pair(self, evo, scenario: MergeScenario, commitOne, commitTestSuite, conflict_info, tool, input: SmatInput=None):
+    def generate_and_run_test_suites_for_commit_pair(self, evo, scenario: MergeScenario, commitOne, commitTestSuite, conflict_info, tool, input: MergeScenarioUnderAnalysis = None):
         path_suite = []
         test_result_base = set()
         test_result_parent_test_suite = set()
@@ -166,10 +166,10 @@ class Setup_tool(ABC):
         return res
 
     @abstractmethod
-    def generate_test_suite(self, scenario: MergeScenario, project_dep, input: SmatInput) -> Suite:
+    def generate_test_suite(self, scenario: MergeScenario, project_dep, input: MergeScenarioUnderAnalysis) -> Suite:
         pass
 
-    def generate_and_run_test_suites_for_commit(self, evo, scenario: MergeScenario, commitOne, conflict_info, tool, input: SmatInput = None):
+    def generate_and_run_test_suites_for_commit(self, evo, scenario: MergeScenario, commitOne, conflict_info, tool, input: MergeScenarioUnderAnalysis = None):
         path_suite = []
         test_result_base = set()
 
@@ -185,7 +185,7 @@ class Setup_tool(ABC):
 
         return path_suite, test_result_base
 
-    def run_tool_for_commit(self, evo, scenario: MergeScenario, jarCommit, commitSha, tool, projectName=None, input: SmatInput = None):
+    def run_tool_for_commit(self, evo, scenario: MergeScenario, jarCommit, commitSha, tool, projectName=None, input: MergeScenarioUnderAnalysis = None):
         conflict_info = []
         try:
             self.setup_for_partial_merge_scenario(evo, scenario, jarCommit, jarCommit, jarCommit)

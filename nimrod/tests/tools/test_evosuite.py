@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import os
 import shutil
-from nimrod.input_parsing.smat_input import ScenarioInformation, SmatInput
+from nimrod.core.merge_scenario_under_analysis import ScenarioInformation, MergeScenarioUnderAnalysis
 from nimrod.project_info.merge_scenario import MergeScenario
 
 from nimrod.tests.utils import get_config
@@ -28,8 +28,8 @@ class TestEvosuite(TestCase):
 
         self.maven.compile(calculator_project_dir(), 10)
 
-    def _get_testing_input(self) -> SmatInput:
-        return SmatInput(
+    def _get_testing_input(self) -> MergeScenarioUnderAnalysis:
+        return MergeScenarioUnderAnalysis(
             project_name="testing-project",
             run_analysis=True,
             scenario_commits=ScenarioInformation(

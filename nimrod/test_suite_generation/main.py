@@ -3,14 +3,14 @@ from typing import List
 
 from nimrod.test_suite_generation.generators.test_suite_generator import TestSuiteGenerator
 from nimrod.test_suite_generation.test_suite import TestSuite
-from nimrod.input_parsing.smat_input import SmatInput
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 
 class TestSuiteGeneration:
     def __init__(self, test_suite_generators: List[TestSuiteGenerator]) -> None:
         self._test_suite_generators = test_suite_generators
 
-    def generate_test_suites(self, scenario: SmatInput, input_jar: str, use_determinism: bool) -> List[TestSuite]:
+    def generate_test_suites(self, scenario: MergeScenarioUnderAnalysis, input_jar: str, use_determinism: bool) -> List[TestSuite]:
         logging.info("Starting tests generation for project %s using jar %s", scenario.project_name, input_jar)
         test_suites: List[TestSuite] = list()
 

@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 from nimrod.test_suite_generation.test_suite import TestSuite
-from nimrod.input_parsing.smat_input import ScenarioInformation as ScenarioJars
+from nimrod.core.merge_scenario_under_analysis import ScenarioInformation as ScenarioJars
 from nimrod.test_suites_execution.test_case_result import TestCaseResult
 from nimrod.test_suites_execution.test_case_execution_in_merge_scenario import TestCaseExecutionInMergeScenario
 from nimrod.test_suites_execution.test_suite_executor import TestSuiteExecutor
@@ -45,3 +45,6 @@ class TestSuitesExecution:
             )
 
         return test_suite_results
+
+    def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str]) -> str:
+        return self._test_suite_executor.execute_test_suite_with_coverage(test_suite, target_jar, test_cases)
