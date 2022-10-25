@@ -1,10 +1,8 @@
 import logging
-import os
-from typing import Dict, List
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 from nimrod.test_suite_generation.generators.evosuite_test_suite_generator import EvosuiteTestSuiteGenerator
-from nimrod.tools.bin import EVOSUITE, EVOSUITE_RUNTIME
+from nimrod.tools.bin import EVOSUITE
 
 
 class EvosuiteDifferentialTestSuiteGenerator(EvosuiteTestSuiteGenerator):
@@ -20,9 +18,16 @@ class EvosuiteDifferentialTestSuiteGenerator(EvosuiteTestSuiteGenerator):
               '-projectCP', input_jar,
               f'-Dregressioncp={scenario.scenario_jars.base}',
               '-class', class_name,
-              f'-Dsearch_budget={self.SEARCH_BUDGET}',
               '-DOUTPUT_DIR=' + output_path,
+              '-Dminimize=false',
+              '-Djunit_check=false',
+              '-Dinline=false',
           ]
+          
+          if use_determinism:
+            params += ["-Dstopping_condition=MaxStatements", f"-seed={self.SEED}"]
+          else:
+            params += [f'-Dsearch_budget={self.SEARCH_BUDGET}']
 
           if(len(methods) > 0):
             params.append(

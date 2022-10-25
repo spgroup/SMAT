@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import logging
 from os import makedirs, path
 from time import time
-from typing import Dict, List
+from typing import List
 
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.tests.utils import get_base_output_path
@@ -14,6 +14,9 @@ from nimrod.utils import generate_classpath
 
 
 class TestSuiteGenerator(ABC):
+    SEARCH_BUDGET = int(get_config().get('test_suite_generation_search_budget', 300))
+    SEED = int(get_config().get('test_suite_generation_seed', 42))
+
     def __init__(self, java: Java) -> None:
         self._java = java
 
