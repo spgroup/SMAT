@@ -30,7 +30,7 @@ This property allows to customize the time **in seconds** provided for each gene
 If set to true, SMAT will use deterministic versions of its generators, i.e., the generated suites will always be the same regardless of how many times the code is executed.
 
 ### test_suite_generation_seed
-When `generate_deterministic_test_suites` is set to true, this allows the user to customize the seed which will be provided for the generators implemented. Default value is `42`.
+When `generate_deterministic_test_suites` is set to true, the user customizes the seed that is provided for the invoked test generation tools. Default value is `42`.
 
 ## Output Generation
 The following properties are related to the Output Generation step.
