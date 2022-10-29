@@ -24,7 +24,7 @@ The following properties are related to the Test Suites Generation step.
 This property consists of an array with the name of the Generators which will be used in SMAT during Test Suite Generation step. If not set, all the implemented generators will be used. Valid values are: `randoop`, `randoop-modified`, `evosuite` and `evosuite-differential`.
 
 ### test_suite_generation_search_budget
-This property allows to customize the time **in seconds** provided for each generator during Test Suite Generation. Default value is 300 seconds. Please note that this option will be ignored when using deterministic Test Suites.
+This property allows to customize the time **in seconds** provided for each generator during Test Suite Generation. Default value is 300 seconds. Please note that this option will be ignored when using deterministic Test Suites. Be aware that when using deterministic test suites generation, the budget time is ignored and other stopping criterias are applied, since different computing power can influence in the time required to generate the same test suite.
 
 ### generate_deterministic_test_suites
 If set to true, SMAT will use deterministic versions of its generators, i.e., the generated suites will always be the same regardless of how many times the code is executed.
