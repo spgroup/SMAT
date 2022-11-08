@@ -4,14 +4,11 @@ from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 from nimrod.test_suite_generation.generators.test_suite_generator import \
     TestSuiteGenerator
-from nimrod.tests.utils import get_config
 from nimrod.tools.java import Java
 from nimrod.utils import generate_classpath
 
 
 class RandoopTestSuiteGenerator(TestSuiteGenerator):
-    SEARCH_BUDGET = int(get_config().get('test_suite_generation_search_budget', 300))
-
     TARGET_METHODS_LIST_FILENAME = 'methods_to_test.txt'
     TARGET_CLASS_LIST_FILENAME = 'classes_to_test.txt'
 
@@ -34,7 +31,7 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
         ]
 
         if use_determinism:
-            params += ["--randomseed=10",
+            params += [f"--randomseed={self.SEED}",
                        "--deterministic", "--time-limit=0", "--attempted-limit=4000"]
         else:
             params += [f"--time-limit={int(self.SEARCH_BUDGET)}"]

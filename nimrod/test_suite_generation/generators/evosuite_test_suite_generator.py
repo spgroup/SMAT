@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Dict, List
+from typing import List
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 
 from nimrod.test_suite_generation.generators.test_suite_generator import \
@@ -10,8 +10,6 @@ from nimrod.tools.bin import EVOSUITE, EVOSUITE_RUNTIME
 
 
 class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
-    SEARCH_BUDGET = int(get_config().get('test_suite_generation_search_budget', 300))
-
     def get_generator_tool_name(self) -> str:
         return "EVOSUITE"
 
@@ -22,18 +20,20 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
               '-jar', EVOSUITE,
               '-projectCP', input_jar,
               '-class', class_name,
-              '-Dtimeout', '5',
               '-Dassertion_strategy=all',
               '-Dp_reflection_on_private=0',
               '-Dreflection_start_percent=0',
               '-Dp_functional_mocking=0',
               '-Dfunctional_mocking_percent=0',
               '-Dminimize=false',
-              f'-Dsearch_budget={self.SEARCH_BUDGET}',
               '-Djunit_check=false',
               '-Dinline=false',
-              '-DOUTPUT_DIR=' + output_path,
           ]
+          
+          if use_determinism:
+            params += ["-Dstopping_condition=MaxStatements", f"-seed={self.SEED}"]
+          else:
+            params += [f'-Dsearch_budget={self.SEARCH_BUDGET}']
 
           if(len(methods) > 0):
             params.append(
