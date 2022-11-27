@@ -32,9 +32,9 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
 
         if use_determinism:
             params += [f"--randomseed={self.SEED}",
-                       "--deterministic", "--time-limit=0", "--attempted-limit=4000"]
+                       "--deterministic", "--time-limit=0", "--generated-limit=4000"]
         else:
-            params += [f"--time-limit={int(self.SEARCH_BUDGET)}"]
+            params += [f"--time-limit={int(self.SEARCH_TIME_AVAILABLE)}"]
 
         self._java.exec_java(output_path, self._java.get_env(), 3000, *tuple(params))
 

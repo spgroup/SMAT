@@ -31,9 +31,10 @@ class EvosuiteTestSuiteGenerator(TestSuiteGenerator):
           ]
           
           if use_determinism:
-            params += ["-Dstopping_condition=MaxStatements", f"-seed={self.SEED}"]
+            params += ["-Dstopping_condition=MaxTests",
+                       f"-seed={self.SEED}", f'-Dsearch_budget={self.DETERMINISTIC_TESTS_QUANTITY}']
           else:
-            params += [f'-Dsearch_budget={self.SEARCH_BUDGET}']
+            params += [f'-Dsearch_budget={self.SEARCH_TIME_AVAILABLE}']
 
           if(len(methods) > 0):
             params.append(
