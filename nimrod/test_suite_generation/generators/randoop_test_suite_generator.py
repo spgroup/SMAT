@@ -32,7 +32,7 @@ class RandoopTestSuiteGenerator(TestSuiteGenerator):
 
         if use_determinism:
             params += [f"--randomseed={self.SEED}",
-                       "--deterministic", "--time-limit=0", "--generated-limit=4000"]
+                       "--deterministic", "--time-limit=0", f'--generated-limit={self.DETERMINISTIC_TESTS_QUANTITY}']
         else:
             params += [f"--time-limit={int(self.SEARCH_TIME_AVAILABLE)}"]
 
