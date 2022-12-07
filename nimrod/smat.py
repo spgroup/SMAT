@@ -6,6 +6,7 @@ from nimrod.output_generation.output_generator import OutputGenerator, OutputGen
 from nimrod.test_suite_generation.main import TestSuiteGeneration
 from nimrod.test_suite_generation.test_suite import TestSuite
 from nimrod.test_suites_execution.main import TestSuitesExecution
+from nimrod.tests.utils import get_config
 
 
 class SMAT:
@@ -31,7 +32,8 @@ class SMAT:
       ))
   
   def _generate_test_suites_for_scenario(self, scenario: MergeScenarioUnderAnalysis) -> List[TestSuite]:
-      suites_left = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.left, True)
-      suites_right = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.right, True)
+      use_determinism = bool(get_config().get('generate_deterministic_test_suites', False))
+      suites_left = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.left, use_determinism)
+      suites_right = self._test_suite_generation.generate_test_suites(scenario, scenario.scenario_jars.right, use_determinism)
 
       return suites_left + suites_right

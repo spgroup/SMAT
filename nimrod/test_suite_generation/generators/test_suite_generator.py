@@ -15,7 +15,10 @@ from nimrod.utils import generate_classpath
 
 
 class TestSuiteGenerator(ABC):
-    SEARCH_BUDGET = int(get_config().get('test_suite_generation_search_budget', 300))
+    SEARCH_TIME_AVAILABLE = int(get_config().get(
+        'test_suite_generation_search_time_available', 300))
+    DETERMINISTIC_TESTS_QUANTITY = int(get_config().get(
+        'test_suite_generation_deterministic_tests_quantity', 100_000_000))
     SEED = int(get_config().get('test_suite_generation_seed', 42))
 
     def __init__(self, java: Java) -> None:
