@@ -13,7 +13,6 @@ from nimrod.utils import get_java_files, get_class_files
 from nimrod.tools.java import Java
 from nimrod.tools.maven import Maven
 from nimrod.tools.randoop import Randoop
-from nimrod.tools.safira import Safira
 
 
 class TestRandoop(TestCase):
@@ -49,38 +48,9 @@ class TestRandoop(TestCase):
 
         self.assertTrue(len(get_java_files(suite_dir)) > 1)
         self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(2, len(suite_classes))
+        self.assertEqual(2, len(suite_classes))
 
         # shutil.rmtree(tests_src)
-
-    def test_generate_with_impact_analysis(self):
-        tests_src = os.path.join(calculator_project_dir(), 'randoop')
-        classes_dir = os.path.join(calculator_target_dir(), 'classes')
-
-        randoop = Randoop(
-            java=self.java,
-            classpath=classes_dir,
-            tests_src=tests_src,
-            sut_class='br.ufal.ic.easy.operations.Sum',
-            sut_classes=['br.ufal.ic.easy.operations.Sum']
-        )
-        randoop.parameters = ['--time-limit=1',
-                              '--testclass=br.ufal.ic.easy.operations.Sum']
-
-        safira = Safira(self.java, classes_dir,
-                        calculator_src_aor_1())
-
-        (suite_name, suite_dir, suite_classes_dir,
-         suite_classes) = randoop.generate_with_impact_analysis(safira)
-
-        self.assertTrue(suite_name.startswith('randoop'))
-        self.assertTrue(os.path.exists(suite_dir))
-
-        self.assertTrue(len(get_java_files(suite_dir)) > 1)
-        self.assertTrue(len(get_class_files(suite_classes_dir)) > 1)
-        self.assertEquals(2, len(suite_classes))
-
-        shutil.rmtree(tests_src)
 
     def tearDown(self):
         calculator_clean_project()

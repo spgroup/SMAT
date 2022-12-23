@@ -11,10 +11,10 @@ class Jacoco:
         self.java = java
 
     # Run java -jar jacococli.jar instrument project_jar --dest dest_jar_instrumented
-    def execInstrumentJar(self, projectJar, destJarinstrumented):
+    def execInstrumentJar(self, projectJar: str, destJarinstrumented: str):
         error = "error caused by duplicated entry"
         first_attempt = True
-        while(error.find("duplicated entry")):
+        while(error.find("duplicated entry") or error.find("duplicate entry")):
             if (first_attempt or self.dealingWithDuplicatedFilesOnJars(projectJar, error)):
                 try:
                     params = [
@@ -88,7 +88,7 @@ class Jacoco:
     # caminhoJacocoExec = local do arquivo jacocoExec
     # classFiles = local do arquivo class da classe alvo dos testes.
     # localHtmlGerado = arquivo para criacao do report html.
-    def generateReportHtml(self, jacocoExecDir, classFiles, targetClass):
+    def generateReportHtml(self, jacocoExecDir, classFiles, targetClass = None):
         novoClassFile = classFiles
         if type(classFiles) == list: # tratamento para caso receber uma lista de jars
             classFiles = self.adjustOnListOfJars(classFiles, targetClass)

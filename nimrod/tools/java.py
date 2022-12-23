@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import subprocess
@@ -77,23 +78,22 @@ class Java:
         try:
             command = [program] + list(args)
 
-            print(command)
+            logging.debug(f"Starting execution of java command: {' '.join(command)}")
 
             return subprocess.check_output(command, cwd=cwd, env=env,
                                            timeout=timeout,
                                            stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            print(e)
             raise e
         except RuntimeError as e:
-            print(e)
+            logging.error(e)
             RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
             raise e
         except subprocess.TimeoutExpired as e:
-            print(e)
+            logging.error(e)
             raise e
         except FileNotFoundError as e:
-            print('[ERROR] {0}: not found.'.format(program), file=sys.stderr)
+            logging.error('[ERROR] {0}: not found.'.format(program))
             raise e
 
     def get_env(self, variables=None):
@@ -108,7 +108,7 @@ class Java:
 
         return env
 
-    def compile_all(self, classpath, directory):
+    def compile_all(self, classpath, directory: str, destination_dir=None):
         if os.path.exists(directory):
             java_files = get_java_files(directory)
             for java_file in java_files:
@@ -116,4 +116,4 @@ class Java:
                                           java_file.replace('.java', '.class'))
                 if not os.path.exists(class_file):
                     self.exec_javac(java_file, directory, None, None,
-                                    '-classpath', classpath)
+                                    '-classpath', classpath, "-d", directory if not destination_dir else destination_dir)

@@ -1,24 +1,15 @@
+from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
 from nimrod.setup_tools.setup_tool import Setup_tool
-from nimrod.tools.randoop_modified import Randoop_Modified
-from nimrod.tools.safira import Safira
+from nimrod.tests.utils import get_config
+from nimrod.test_suite_generation.generators.randoop_test_suite_generator import RandoopTestSuiteGenerator
+from nimrod.tools.bin import MOD_RANDOOP
 
 
 class Randoop_Modified_setup(Setup_tool):
 
-    def generate_test_suite(self, scenario, project_dep):
-        randoop = Randoop_Modified(
-            java=project_dep.java,
-            classpath=project_dep.parentReg,
-            tests_src=project_dep.tests_dst + '/' + project_dep.project.get_project_name() + '/' + scenario.merge_scenario.get_merge_hash(),
-            sut_class=project_dep.sut_class,
-            sut_classes=project_dep.sut_classes,
-            sut_method=project_dep.sut_method,
-            params=self.tool_parameters
-        )
-        safira = Safira(java=project_dep.java, classes_dir=project_dep.parentReg, mutant_dir=project_dep.baseDir)
-        try:
-            self.test_suite = randoop.generate_with_impact_analysis(safira, True)
-        except Exception as e:
-            print(e)
-            self.test_suite = randoop.generate_with_impact_analysis(safira, False)
+    def generate_test_suite(self, scenario, project_dep, input: MergeScenarioUnderAnalysis):
+        use_determinism = bool(get_config().get('generate_deterministic_test_suites', False))
+        randoop = RandoopTestSuiteGenerator(project_dep.java, MOD_RANDOOP, "RANDOOP-MODIFIED")
+        new_suite = randoop.generate_and_compile_test_suite(input, project_dep.parentReg, use_determinism)
+        self.test_suite = self._convert_new_suite_to_old_test_suite(new_suite)
         return self.test_suite

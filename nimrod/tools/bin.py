@@ -2,6 +2,7 @@ import os
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 
+JUNIT_5 = os.sep.join([PATH, 'bin', 'junit-platform-console-standalone-1.9.1.jar'])
 JUNIT = os.sep.join([PATH, 'bin', 'junit-4.12.jar'])
 HAMCREST = os.sep.join([PATH, 'bin', 'hamcrest-core-1.3.jar'])
 EVOSUITE = os.sep.join([PATH, 'bin', 'evosuite-1.0.6.jar'])
