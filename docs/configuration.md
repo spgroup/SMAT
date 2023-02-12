@@ -21,7 +21,7 @@ This property contains a path to the JSON file which contains input scenarios fo
 The following properties are related to the Test Suites Generation step.
 
 ### test_suite_generators
-This property consists of an array with the name of the Generators which will be used in SMAT during Test Suite Generation step. If not set, all the implemented generators will be used. Valid values are: `randoop`, `randoop-modified`, `evosuite` and `evosuite-differential`.
+This property consists of an array with the name of the Generators which will be used in SMAT during Test Suite Generation step. If not set, all the implemented generators will be used. Valid values are: `randoop`, `randoop-modified`, `evosuite`, `evosuite-differential` and `project`.
 
 ### test_suite_generation_search_time_available
 This property is only used if deterministic test suite generation is disabled. It allows to customize the time **in seconds** provided for each generator during Test Suite Generation. Default value is 300 seconds.
