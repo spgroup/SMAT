@@ -39,7 +39,8 @@ jobs:
     - name: Creating env-config.json
       run: |
         cd /home/runner/work/SMAT/SMAT/nimrod/tests/
-        contents="$(jq '.java_home = "/opt/hostedtoolcache/Java_Adopt_jdk/8.0.292-1/x64" | .maven_home = "/opt/hostedtoolcache/maven/3.5.4/x64"' env-config.json)"
+        java_path="/opt/hostedtoolcache/Java_Adopt_jdk/$(ls /opt/hostedtoolcache/Java_Adopt_jdk)/x64"
+        contents="$(jq --arg java_path "$java_path" '.java_home=$java_path | .maven_home = "/opt/hostedtoolcache/maven/3.5.4/x64"' env-config.json)"
         echo "${contents}" > env-config.json
         cd /home/runner/work/SMAT/SMAT
     - name: Test with pytest
