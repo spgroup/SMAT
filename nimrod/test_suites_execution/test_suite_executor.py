@@ -85,11 +85,11 @@ class TestSuiteExecutor:
             test_run_count = 0
             if tests_run:
                 test_run_count = int(tests_run.group('tests_run_count'))
-            for i in range(0, test_run_count):
-                test_case_name = 'test{number:0{width}d}'.format(width=len(str(test_run_count)), number=i)
-                if not results.get(test_case_name):
-                    results[test_case_name] = TestCaseResult.PASS
- 
+                if results:
+                    for i in range(0, test_run_count):
+                        test_case_name = 'test{number:0{width}d}'.format(width=len(str(test_run_count)), number=i)
+                        if not results.get(test_case_name):
+                            results[test_case_name] = TestCaseResult.PASS
         return results
 
     def execute_test_suite_with_coverage(self, test_suite: TestSuite, target_jar: str, test_cases: List[str]) -> str:

@@ -3,6 +3,7 @@ import logging
 from os import makedirs, path
 from time import time
 from typing import List
+from subprocess import CalledProcessError
 
 from nimrod.tests.utils import get_config
 from nimrod.core.merge_scenario_under_analysis import MergeScenarioUnderAnalysis
@@ -70,6 +71,9 @@ class TestSuiteGenerator(ABC):
         class_path = generate_classpath([input_jar, test_suite_path, compiled_classes_path, JUNIT, HAMCREST] + extra_class_path)
 
         for java_file in self._get_test_suite_class_paths(test_suite_path):
-            self._java.exec_javac(java_file, test_suite_path, None, None,
-                                  '-classpath', class_path, '-d', compiled_classes_path)
+            try:
+                self._java.exec_javac(java_file, test_suite_path, None, None,
+                                    '-classpath', class_path, '-d', compiled_classes_path)
+            except CalledProcessError:
+                logging.error("Error while compiling %s", java_file)
         return class_path
